@@ -1,0 +1,229 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@import "highlight.js/styles/github-dark.css";
+
+:root {
+  --bg-window: #F3F4F6;
+  --bg-editor: #FFFFFF;
+  --bg-preview: #F9FAFB;
+  --border-color: #E5E7EB;
+  --text-primary: #111827;
+  --text-secondary: #4B5563;
+  --text-muted: #9CA3AF;
+  --accent: #2563EB;
+  --accent-hover: #1D4ED8;
+  --accent-fg: #FFFFFF;
+  --bg-header: #FFFFFF;
+  --btn-bg: #FFFFFF;
+  --btn-hover: #F9FAFB;
+  --code-block-bg: #0f172a;
+  --code-block-fg: #e2e8f0;
+  --code-block-border: #1e293b;
+  --inline-code-bg: #e2e8f0;
+  --inline-code-fg: #0f172a;
+  --inline-code-border: #cbd5e1;
+}
+
+.theme-dark {
+  --bg-window: #0F172A;
+  --bg-editor: #1E293B;
+  --bg-preview: #0F172A;
+  --border-color: #334155;
+  --text-primary: #F8FAFC;
+  --text-secondary: #CBD5E1;
+  --text-muted: #64748B;
+  --accent: #3B82F6;
+  --accent-hover: #60A5FA;
+  --accent-fg: #FFFFFF;
+  --bg-header: #1E293B;
+  --btn-bg: #0F172A;
+  --btn-hover: #1E293B;
+  --code-block-bg: #111827;
+  --code-block-fg: #f8fafc;
+  --code-block-border: #334155;
+  --inline-code-bg: #1e293b;
+  --inline-code-fg: #e2e8f0;
+  --inline-code-border: #475569;
+}
+
+.theme-hc {
+  --bg-window: #000000;
+  --bg-editor: #000000;
+  --bg-preview: #000000;
+  --border-color: #FFFFFF;
+  --text-primary: #FFFFFF;
+  --text-secondary: #FFFF00;
+  --text-muted: #FFFF00;
+  --accent: #00FFFF;
+  --accent-hover: #00CCCC;
+  --accent-fg: #000000;
+  --bg-header: #000000;
+  --btn-bg: #000000;
+  --btn-hover: #333333;
+  --code-block-bg: #000000;
+  --code-block-fg: #ffffff;
+  --code-block-border: #00ffff;
+  --inline-code-bg: #111111;
+  --inline-code-fg: #00ffff;
+  --inline-code-border: #ffffff;
+}
+
+@theme {
+  --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Menlo', 'Monaco', 'Courier New', monospace;
+
+  --color-window: var(--bg-window);
+  --color-editor: var(--bg-editor);
+  --color-preview: var(--bg-preview);
+  --color-border: var(--border-color);
+  --color-primary: var(--text-primary);
+  --color-secondary: var(--text-secondary);
+  --color-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-fg: var(--accent-fg);
+  --color-header: var(--bg-header);
+  --color-btn-bg: var(--btn-bg);
+  --color-btn-hover: var(--btn-hover);
+}
+
+.markdown-content pre {
+  background: var(--code-block-bg);
+  color: var(--code-block-fg);
+  border: 1px solid var(--code-block-border);
+  border-radius: 1rem;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+}
+
+.markdown-content pre code,
+.markdown-content pre .hljs {
+  background: transparent;
+  color: inherit;
+  text-shadow: none;
+}
+
+.markdown-content pre code {
+  display: block;
+  font-size: 0.95em;
+  line-height: 1.75;
+}
+
+.markdown-content :not(pre) > code {
+  background: var(--inline-code-bg);
+  color: var(--inline-code-fg);
+  border: 1px solid var(--inline-code-border);
+  border-radius: 0.5rem;
+  padding: 0.15rem 0.4rem;
+  font-weight: 600;
+}
+
+.markdown-content code::before,
+.markdown-content code::after {
+  content: none;
+}
+
+.print-root {
+  display: none;
+}
+
+.print-root--screen {
+  display: block;
+  min-height: 100vh;
+  padding: 32px 40px;
+  background: #ffffff;
+}
+
+.print-page {
+  background: #ffffff;
+  color: #111827;
+}
+
+@media print {
+  @page {
+    margin: 14mm 12mm;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+  }
+
+  body.printing-pdf .app-shell {
+    display: none !important;
+  }
+
+  body.printing-pdf .print-root {
+    display: block !important;
+  }
+
+  body.printing-pdf .print-page {
+    max-width: 840px;
+    margin: 0 auto;
+    padding: 0;
+  }
+
+  body.printing-pdf .print-root .markdown-content {
+    color: #111827 !important;
+  }
+
+  body.printing-pdf .print-root .markdown-content h1,
+  body.printing-pdf .print-root .markdown-content h2,
+  body.printing-pdf .print-root .markdown-content h3,
+  body.printing-pdf .print-root .markdown-content h4,
+  body.printing-pdf .print-root .markdown-content h5,
+  body.printing-pdf .print-root .markdown-content h6 {
+    color: #111827 !important;
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+    page-break-after: avoid;
+    break-after: avoid-page;
+  }
+
+  body.printing-pdf .print-root .markdown-content p,
+  body.printing-pdf .print-root .markdown-content li,
+  body.printing-pdf .print-root .markdown-content blockquote,
+  body.printing-pdf .print-root .markdown-content td,
+  body.printing-pdf .print-root .markdown-content th {
+    color: #374151 !important;
+  }
+
+  body.printing-pdf .print-root .markdown-content pre,
+  body.printing-pdf .print-root .markdown-content blockquote,
+  body.printing-pdf .print-root .markdown-content table,
+  body.printing-pdf .print-root .markdown-content figure,
+  body.printing-pdf .print-root .markdown-content img,
+  body.printing-pdf .print-root .markdown-content svg {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  body.printing-pdf .print-root .markdown-content li {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  body.printing-pdf .print-root .markdown-content pre {
+    box-shadow: none !important;
+    overflow: visible;
+  }
+
+  body.printing-pdf .print-root .markdown-content :not(pre) > code {
+    display: inline;
+    vertical-align: baseline;
+    background: #dbeafe !important;
+    color: #1e3a8a !important;
+    border: 1px solid #bfdbfe !important;
+    border-radius: 0.55rem;
+    padding: 0.08rem 0.45rem;
+    line-height: inherit;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+
+  body.printing-pdf .print-root .markdown-content hr {
+    border-color: #e5e7eb !important;
+  }
+}
