@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
-import { Download, Copy, FileText, Check, LayoutPanelLeft, Palette } from 'lucide-react';
+import { Download, Copy, FileText, Check, LayoutPanelLeft, Palette, FolderOpen, Columns, Maximize, PanelLeft } from 'lucide-react';
 
 const DEFAULT_MARKDOWN = `# Welcome to Markdown Previewer
 
@@ -51,6 +51,12 @@ export default function App() {
   const [markdown, setMarkdown] = useState(DEFAULT_MARKDOWN);
   const [copied, setCopied] = useState(false);
   const [theme, setTheme] = useState('light');
+  
+  // New State for Folder and View Mode
+  const [viewMode, setViewMode] = useState<'preview' | 'split'>('preview');
+  const [files, setFiles] = useState<any[]>([]);
+  const [activeFile, setActiveFile] = useState<any | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   useEffect(() => {
     document.documentElement.className = theme === 'light' ? '' : `theme-${theme}`;
@@ -67,11 +73,46 @@ export default function App() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'document.md';
+    a.download = activeFile ? activeFile.name : 'document.md';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  };
+
+  const handleOpenFolder = async () => {
+    if (!('showDirectoryPicker' in window)) {
+      alert('Your browser does not support the File System Access API. Please use Chrome or Edge.');
+      return;
+    }
+    try {
+      const dirHandle = await (window as any).showDirectoryPicker();
+      const mdFiles = [];
+      for await (const entry of dirHandle.values()) {
+        if (entry.kind === 'file' && (entry.name.endsWith('.md') || entry.name.endsWith('.txt'))) {
+          mdFiles.push(entry);
+        }
+      }
+      // Sort files alphabetically
+      mdFiles.sort((a, b) => a.name.localeCompare(b.name));
+      setFiles(mdFiles);
+      if (mdFiles.length > 0) {
+        loadFile(mdFiles[0]);
+      }
+    } catch (err) {
+      console.error('Failed to open directory:', err);
+    }
+  };
+
+  const loadFile = async (fileHandle: any) => {
+    try {
+      const file = await fileHandle.getFile();
+      const text = await file.text();
+      setMarkdown(text);
+      setActiveFile(fileHandle);
+    } catch (err) {
+      console.error('Failed to read file:', err);
+    }
   };
 
   return (
@@ -79,14 +120,40 @@ export default function App() {
       {/* Header */}
       <header className="h-[50px] bg-header border-b border-border px-4 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
+          <button 
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="p-1.5 text-secondary hover:bg-btn-hover rounded-md transition-colors"
+            title="Toggle Sidebar"
+          >
+            <PanelLeft className="w-5 h-5" />
+          </button>
           <div className="w-7 h-7 bg-accent rounded-md text-accent-fg flex items-center justify-center font-bold text-[14px]">
             <LayoutPanelLeft className="w-4 h-4 text-accent-fg" />
           </div>
-          <h1 className="text-[15px] font-semibold text-primary">Markdown Previewer</h1>
+          <h1 className="text-[15px] font-semibold text-primary hidden sm:block">Markdown Previewer</h1>
         </div>
+        
         <div className="flex items-center gap-2">
+          {/* View Mode Toggle */}
+          <div className="flex items-center bg-btn-bg border border-border rounded-md p-0.5 mr-2">
+            <button
+              onClick={() => setViewMode('preview')}
+              className={`p-1.5 rounded-sm transition-colors ${viewMode === 'preview' ? 'bg-border text-primary' : 'text-secondary hover:text-primary'}`}
+              title="Full Preview"
+            >
+              <Maximize className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setViewMode('split')}
+              className={`p-1.5 rounded-sm transition-colors ${viewMode === 'split' ? 'bg-border text-primary' : 'text-secondary hover:text-primary'}`}
+              title="Split View"
+            >
+              <Columns className="w-4 h-4" />
+            </button>
+          </div>
+
           <div className="flex items-center gap-2 border-r border-border pr-4 mr-2">
-            <Palette className="w-4 h-4 text-secondary" />
+            <Palette className="w-4 h-4 text-secondary hidden sm:block" />
             <select
               value={theme}
               onChange={(e) => setTheme(e.target.value)}
@@ -102,53 +169,108 @@ export default function App() {
             className="flex items-center gap-2 px-3 py-1.5 text-[13px] text-primary bg-btn-bg border border-border rounded hover:bg-btn-hover cursor-pointer transition-colors"
           >
             {copied ? <Check className="w-4 h-4 text-accent" /> : <Copy className="w-4 h-4" />}
-            {copied ? 'Copied!' : 'Copy Raw'}
+            <span className="hidden sm:inline">{copied ? 'Copied!' : 'Copy Raw'}</span>
           </button>
           <button
             onClick={handleDownload}
             className="flex items-center gap-2 px-3 py-1.5 text-[13px] text-accent-fg bg-accent border border-accent rounded hover:bg-accent-hover cursor-pointer transition-colors"
           >
             <Download className="w-4 h-4" />
-            Download .md
+            <span className="hidden sm:inline">Download .md</span>
           </button>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col md:flex-row overflow-hidden">
-        {/* Editor Pane */}
-        <div className="flex-1 flex flex-col border-r border-border bg-editor min-w-0">
-          <div className="px-6 py-3 flex items-center gap-2 text-[11px] font-semibold tracking-[0.05em] text-muted uppercase">
-            <FileText className="w-3.5 h-3.5" />
-            Editor
-          </div>
-          <textarea
-            value={markdown}
-            onChange={(e) => setMarkdown(e.target.value)}
-            className="flex-1 w-full px-6 pb-6 resize-none focus:outline-none font-mono text-[14px] leading-[1.6] text-primary bg-transparent"
-            placeholder="Type your markdown here..."
-            spellCheck="false"
-          />
-        </div>
-
-        {/* Preview Pane */}
-        <div className="flex-1 flex flex-col bg-preview min-w-0 overflow-y-auto">
-          <div className="px-10 py-3 flex items-center gap-2 text-[11px] font-semibold tracking-[0.05em] text-muted uppercase sticky top-0 z-10 bg-preview">
-            <LayoutPanelLeft className="w-3.5 h-3.5" />
-            Preview
-          </div>
-          <div className="px-10 pb-10 max-w-4xl mx-auto w-full">
-            <div className="prose max-w-none prose-headings:border-b prose-headings:border-border prose-headings:pb-2 prose-h1:text-[28px] prose-headings:text-primary prose-p:text-secondary prose-p:leading-[1.7] prose-li:my-2 prose-li:text-secondary prose-strong:text-primary prose-a:text-accent prose-code:text-primary prose-blockquote:text-secondary prose-blockquote:border-border prose-th:text-primary prose-td:text-secondary prose-hr:border-border prose-pre:bg-[#0d1117] prose-pre:p-0">
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                rehypePlugins={[rehypeHighlight]}
+      {/* Main Content Area */}
+      <div className="flex-1 flex overflow-hidden">
+        
+        {/* Sidebar (File Explorer) */}
+        {isSidebarOpen && (
+          <aside className="w-64 border-r border-border bg-editor flex flex-col shrink-0">
+            <div className="px-4 py-3 border-b border-border flex items-center justify-between">
+              <span className="text-[11px] font-semibold tracking-[0.05em] text-muted uppercase">Explorer</span>
+              <button 
+                onClick={handleOpenFolder}
+                className="p-1 text-secondary hover:text-primary hover:bg-btn-hover rounded transition-colors"
+                title="Open Folder"
               >
-                {markdown}
-              </ReactMarkdown>
+                <FolderOpen className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-2">
+              {files.length === 0 ? (
+                <div className="text-[13px] text-muted text-center mt-10 px-4">
+                  <FolderOpen className="w-8 h-8 mx-auto mb-3 opacity-50" />
+                  <p>No folder opened.</p>
+                  <button 
+                    onClick={handleOpenFolder}
+                    className="mt-3 text-accent hover:underline"
+                  >
+                    Open a folder
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-0.5">
+                  {files.map(f => (
+                    <div
+                      key={f.name}
+                      onClick={() => loadFile(f)}
+                      className={`px-3 py-2 text-[13px] rounded cursor-pointer flex items-center gap-2 transition-colors ${
+                        activeFile?.name === f.name 
+                          ? 'bg-accent text-accent-fg' 
+                          : 'text-secondary hover:bg-btn-hover hover:text-primary'
+                      }`}
+                    >
+                      <FileText className="w-4 h-4 shrink-0" />
+                      <span className="truncate">{f.name}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </aside>
+        )}
+
+        {/* Editor & Preview Panes */}
+        <main className="flex-1 flex flex-col md:flex-row overflow-hidden">
+          
+          {/* Editor Pane (Only visible in split mode) */}
+          {viewMode === 'split' && (
+            <div className="flex-1 flex flex-col border-r border-border bg-editor min-w-0">
+              <div className="px-6 py-3 flex items-center gap-2 text-[11px] font-semibold tracking-[0.05em] text-muted uppercase">
+                <FileText className="w-3.5 h-3.5" />
+                Editor {activeFile && <span className="normal-case font-normal text-secondary ml-2">- {activeFile.name}</span>}
+              </div>
+              <textarea
+                value={markdown}
+                onChange={(e) => setMarkdown(e.target.value)}
+                className="flex-1 w-full px-6 pb-6 resize-none focus:outline-none font-mono text-[14px] leading-[1.6] text-primary bg-transparent"
+                placeholder="Type your markdown here..."
+                spellCheck="false"
+              />
+            </div>
+          )}
+
+          {/* Preview Pane */}
+          <div className="flex-1 flex flex-col bg-preview min-w-0 overflow-y-auto">
+            <div className="px-10 py-3 flex items-center gap-2 text-[11px] font-semibold tracking-[0.05em] text-muted uppercase sticky top-0 z-10 bg-preview">
+              <LayoutPanelLeft className="w-3.5 h-3.5" />
+              Preview {activeFile && viewMode === 'preview' && <span className="normal-case font-normal text-secondary ml-2">- {activeFile.name}</span>}
+            </div>
+            <div className="px-10 pb-10 max-w-4xl mx-auto w-full">
+              <div className="prose max-w-none prose-headings:border-b prose-headings:border-border prose-headings:pb-2 prose-h1:text-[28px] prose-headings:text-primary prose-p:text-secondary prose-p:leading-[1.7] prose-li:my-2 prose-li:text-secondary prose-strong:text-primary prose-a:text-accent prose-code:text-primary prose-blockquote:text-secondary prose-blockquote:border-border prose-th:text-primary prose-td:text-secondary prose-hr:border-border prose-pre:bg-[#0d1117] prose-pre:p-0">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  rehypePlugins={[rehypeHighlight]}
+                >
+                  {markdown}
+                </ReactMarkdown>
+              </div>
             </div>
           </div>
-        </div>
-      </main>
+
+        </main>
+      </div>
     </div>
   );
 }
