@@ -1,0 +1,71 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@import "highlight.js/styles/github-dark.css";
+
+:root {
+  --bg-window: #F3F4F6;
+  --bg-editor: #FFFFFF;
+  --bg-preview: #F9FAFB;
+  --border-color: #E5E7EB;
+  --text-primary: #111827;
+  --text-secondary: #4B5563;
+  --text-muted: #9CA3AF;
+  --accent: #2563EB;
+  --accent-hover: #1D4ED8;
+  --accent-fg: #FFFFFF;
+  --bg-header: #FFFFFF;
+  --btn-bg: #FFFFFF;
+  --btn-hover: #F9FAFB;
+}
+
+.theme-dark {
+  --bg-window: #0F172A;
+  --bg-editor: #1E293B;
+  --bg-preview: #0F172A;
+  --border-color: #334155;
+  --text-primary: #F8FAFC;
+  --text-secondary: #CBD5E1;
+  --text-muted: #64748B;
+  --accent: #3B82F6;
+  --accent-hover: #60A5FA;
+  --accent-fg: #FFFFFF;
+  --bg-header: #1E293B;
+  --btn-bg: #0F172A;
+  --btn-hover: #1E293B;
+}
+
+.theme-hc {
+  --bg-window: #000000;
+  --bg-editor: #000000;
+  --bg-preview: #000000;
+  --border-color: #FFFFFF;
+  --text-primary: #FFFFFF;
+  --text-secondary: #FFFF00;
+  --text-muted: #FFFF00;
+  --accent: #00FFFF;
+  --accent-hover: #00CCCC;
+  --accent-fg: #000000;
+  --bg-header: #000000;
+  --btn-bg: #000000;
+  --btn-hover: #333333;
+}
+
+@theme {
+  --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Menlo', 'Monaco', 'Courier New', monospace;
+
+  --color-window: var(--bg-window);
+  --color-editor: var(--bg-editor);
+  --color-preview: var(--bg-preview);
+  --color-border: var(--border-color);
+  --color-primary: var(--text-primary);
+  --color-secondary: var(--text-secondary);
+  --color-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-fg: var(--accent-fg);
+  --color-header: var(--bg-header);
+  --color-btn-bg: var(--btn-bg);
+  --color-btn-hover: var(--btn-hover);
+}
