@@ -2710,7 +2710,7 @@ dependencies = [
 
 [[package]]
 name = "previewermd"
-version = "0.1.0"
+version = "0.4.1"
 dependencies = [
  "serde",
  "serde_json",
@@ -2719,6 +2719,7 @@ dependencies = [
  "tauri-plugin-dialog",
  "tauri-plugin-fs",
  "tauri-plugin-opener",
+ "url",
 ]
 
 [[package]]

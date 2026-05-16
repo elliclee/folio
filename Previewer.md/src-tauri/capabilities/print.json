@@ -1,0 +1,11 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "print",
+  "description": "Capability for transient print windows",
+  "windows": ["print-*"],
+  "permissions": [
+    "core:default",
+    "core:window:allow-close",
+    "core:webview:allow-print"
+  ]
+}

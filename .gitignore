@@ -4,5 +4,17 @@ dist/
 coverage/
 .DS_Store
 *.log
+
+# Local environment and signing material
 .env*
 !.env.example
+*.key
+*.pem
+*.p12
+*.mobileprovision
+
+# Generated native build output
+target/
+**/target/
+*.xcarchive/
+DerivedData/

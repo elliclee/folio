@@ -1,23 +1,25 @@
 {
   "name": "previewermd",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.4.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "tsx --test src/**/*.test.ts",
+    "perf:baseline": "node scripts/perf-baseline.mjs",
+    "perf:gate": "node scripts/perf-baseline.mjs --runs 5 --max app.first_render=300 --max app.syntax_highlight_ready=350",
     "tauri": "tauri"
   },
   "dependencies": {
+    "@tailwindcss/typography": "^0.5.19",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-dialog": "^2",
     "@tauri-apps/plugin-fs": "^2",
     "@tauri-apps/plugin-opener": "^2",
-    "@tailwindcss/typography": "^0.5.19",
-    "html2pdf.js": "^0.10.3",
     "highlight.js": "^11.11.1",
+    "html2pdf.js": "^0.10.3",
     "lucide-react": "^0.546.0",
     "motion": "^12.23.24",
     "react": "^19.1.0",
@@ -29,14 +31,14 @@
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.14",
     "@tauri-apps/cli": "^2",
+    "@types/html2pdf.js": "^0.10.0",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
-    "@types/html2pdf.js": "^0.10.0",
     "@vitejs/plugin-react": "^4.6.0",
+    "autoprefixer": "^10.4.21",
     "tailwindcss": "^4.1.14",
     "tsx": "^4.21.0",
     "typescript": "~5.8.3",
-    "vite": "^7.0.4",
-    "autoprefixer": "^10.4.21"
+    "vite": "^7.0.4"
   }
 }

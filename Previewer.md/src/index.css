@@ -25,7 +25,7 @@
   --inline-code-border: #cbd5e1;
 }
 
-.theme-dark {
+.app-shell.theme-dark {
   --bg-window: #0F172A;
   --bg-editor: #1E293B;
   --bg-preview: #0F172A;
@@ -47,7 +47,7 @@
   --inline-code-border: #475569;
 }
 
-.theme-hc {
+.app-shell.theme-hc {
   --bg-window: #000000;
   --bg-editor: #000000;
   --bg-preview: #000000;
@@ -69,6 +69,116 @@
   --inline-code-border: #ffffff;
 }
 
+.app-shell.theme-claude {
+  --bg-window: #f5f4ed;
+  --bg-editor: #faf9f5;
+  --bg-preview: #faf9f5;
+  --border-color: #f0eee6;
+  --text-primary: #141413;
+  --text-secondary: #5e5d59;
+  --text-muted: #87867f;
+  --accent: #c96442;
+  --accent-hover: #d97757;
+  --accent-fg: #faf9f5;
+  --bg-header: #f5f4ed;
+  --btn-bg: #e8e6dc;
+  --btn-hover: #f0eee6;
+  --code-block-bg: #30302e;
+  --code-block-fg: #faf9f5;
+  --code-block-border: #30302e;
+  --inline-code-bg: #e8e6dc;
+  --inline-code-fg: #3d3d3a;
+  --inline-code-border: #d1cfc5;
+}
+
+.app-shell.theme-claude-dark {
+  --bg-window: #1a1512;
+  --bg-editor: #211b18;
+  --bg-preview: #211b18;
+  --border-color: #43312a;
+  --text-primary: #f6ede6;
+  --text-secondary: #d6c3b5;
+  --text-muted: #a58d80;
+  --accent: #c96442;
+  --accent-hover: #d97757;
+  --accent-fg: #fff8f4;
+  --bg-header: #1a1512;
+  --btn-bg: #2a221e;
+  --btn-hover: #352a25;
+  --code-block-bg: #14100e;
+  --code-block-fg: #f6ede6;
+  --code-block-border: #4d3830;
+  --inline-code-bg: #2f2622;
+  --inline-code-fg: #f2d8ca;
+  --inline-code-border: #4d3830;
+}
+
+.app-shell.theme-vercel {
+  --bg-window: #ffffff;
+  --bg-editor: #ffffff;
+  --bg-preview: #ffffff;
+  --border-color: #ebebeb;
+  --text-primary: #171717;
+  --text-secondary: #4d4d4d;
+  --text-muted: #808080;
+  --accent: #0072f5;
+  --accent-hover: #0a72ef;
+  --accent-fg: #ffffff;
+  --bg-header: #ffffff;
+  --btn-bg: #ffffff;
+  --btn-hover: #fafafa;
+  --code-block-bg: #111111;
+  --code-block-fg: #fafafa;
+  --code-block-border: #2a2a2a;
+  --inline-code-bg: #fafafa;
+  --inline-code-fg: #171717;
+  --inline-code-border: #ebebeb;
+}
+
+.app-shell.theme-lovable {
+  --bg-window: #f7f4ed;
+  --bg-editor: #fcfbf8;
+  --bg-preview: #fcfbf8;
+  --border-color: #eceae4;
+  --text-primary: #1c1c1c;
+  --text-secondary: rgba(28, 28, 28, 0.82);
+  --text-muted: #5f5f5d;
+  --accent: #1c1c1c;
+  --accent-hover: #111111;
+  --accent-fg: #fcfbf8;
+  --bg-header: #f7f4ed;
+  --btn-bg: #f7f4ed;
+  --btn-hover: rgba(28, 28, 28, 0.04);
+  --code-block-bg: #1c1c1c;
+  --code-block-fg: #fcfbf8;
+  --code-block-border: rgba(255, 255, 255, 0.12);
+  --inline-code-bg: rgba(28, 28, 28, 0.04);
+  --inline-code-fg: #1c1c1c;
+  --inline-code-border: rgba(28, 28, 28, 0.12);
+}
+
+.app-shell.theme-spotify {
+  --bg-window: #121212;
+  --bg-editor: #181818;
+  --bg-preview: #181818;
+  --border-color: #4d4d4d;
+  --text-primary: #ffffff;
+  --text-secondary: #b3b3b3;
+  --text-muted: #7c7c7c;
+  --accent: #1ed760;
+  --accent-hover: #3be477;
+  --accent-fg: #000000;
+  --bg-header: #121212;
+  --btn-bg: #1f1f1f;
+  --btn-hover: #272727;
+  --code-block-bg: #0f0f0f;
+  --code-block-fg: #fdfdfd;
+  --code-block-border: #272727;
+  --inline-code-bg: #1f1f1f;
+  --inline-code-fg: #ffffff;
+  --inline-code-border: #4d4d4d;
+}
+
 @theme {
   --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
   --font-mono: 'Menlo', 'Monaco', 'Courier New', monospace;
@@ -88,14 +198,98 @@
   --color-btn-hover: var(--btn-hover);
 }
 
+.app-shell {
+  --color-window: var(--bg-window);
+  --color-editor: var(--bg-editor);
+  --color-preview: var(--bg-preview);
+  --color-border: var(--border-color);
+  --color-primary: var(--text-primary);
+  --color-secondary: var(--text-secondary);
+  --color-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-fg: var(--accent-fg);
+  --color-header: var(--bg-header);
+  --color-btn-bg: var(--btn-bg);
+  --color-btn-hover: var(--btn-hover);
+}
+
+.app-shell :is(button, select, label, [data-chrome-text]) {
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+.app-shell :is(textarea, .markdown-content, .markdown-content *) {
+  -webkit-touch-callout: default;
+  user-select: text;
+}
+
+.markdown-content a {
+  -webkit-touch-callout: default;
+}
+
+.markdown-content {
+  font-size: 0.96rem;
+  line-height: 1.58;
+}
+
+.markdown-content :where(h1, h2, h3, h4, h5, h6) {
+  scroll-margin-top: 4rem;
+}
+
+.markdown-content :where(h1) {
+  margin-top: 0;
+  margin-bottom: 0.55em;
+  line-height: 1.12;
+}
+
+.markdown-content :where(h2) {
+  margin-top: 1.45em;
+  margin-bottom: 0.55em;
+  line-height: 1.18;
+}
+
+.markdown-content :where(h3) {
+  margin-top: 1.25em;
+  margin-bottom: 0.45em;
+  line-height: 1.22;
+}
+
+.markdown-content :where(p) {
+  margin-top: 0.72em;
+  margin-bottom: 0.72em;
+}
+
+.markdown-content :where(ul, ol) {
+  margin-top: 0.65em;
+  margin-bottom: 0.8em;
+}
+
+.markdown-content :where(li) {
+  margin-top: 0.22em;
+  margin-bottom: 0.22em;
+}
+
+.markdown-content :where(li > p) {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+
+.markdown-content :where(blockquote, table, figure) {
+  margin-top: 0.9em;
+  margin-bottom: 0.9em;
+}
+
 .markdown-content pre {
   background: var(--code-block-bg);
   color: var(--code-block-fg);
   border: 1px solid var(--code-block-border);
-  border-radius: 1rem;
-  padding: 1rem 1.25rem;
+  border-radius: 0.625rem;
+  margin-top: 0.9em;
+  margin-bottom: 0.9em;
+  padding: 0.75rem 1rem;
   overflow-x: auto;
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.14);
 }
 
 .markdown-content pre code,
@@ -108,21 +302,838 @@
 .markdown-content pre code {
   display: block;
   font-size: 0.95em;
-  line-height: 1.75;
+  line-height: 1.58;
 }
 
 .markdown-content :not(pre) > code {
   background: var(--inline-code-bg);
   color: var(--inline-code-fg);
   border: 1px solid var(--inline-code-border);
-  border-radius: 0.5rem;
-  padding: 0.15rem 0.4rem;
+  border-radius: 0.35rem;
+  padding: 0.08rem 0.32rem;
   font-weight: 600;
 }
 
 .markdown-content code::before,
 .markdown-content code::after {
   content: none;
+}
+
+.app-shell.theme-claude,
+.app-shell.theme-claude-dark {
+  background: var(--bg-window);
+  color: var(--text-primary);
+}
+
+.app-shell.theme-claude header,
+.app-shell.theme-claude aside,
+.app-shell.theme-claude .bg-editor,
+.app-shell.theme-claude .bg-preview,
+.app-shell.theme-claude-dark header,
+.app-shell.theme-claude-dark aside,
+.app-shell.theme-claude-dark .bg-editor,
+.app-shell.theme-claude-dark .bg-preview {
+  background: var(--bg-editor);
+}
+
+.app-shell.theme-claude header,
+.app-shell.theme-claude-dark header {
+  border-bottom: none;
+  box-shadow: var(--border-color) 0 0 0 1px;
+}
+
+.app-shell.theme-claude aside,
+.app-shell.theme-claude-dark aside {
+  border-right: none;
+  box-shadow: var(--border-color) 1px 0 0 0;
+}
+
+.app-shell.theme-claude .markdown-content,
+.app-shell.theme-claude-dark .markdown-content {
+  color: var(--text-primary);
+  letter-spacing: 0;
+}
+
+.app-shell.theme-claude .markdown-content h1,
+.app-shell.theme-claude .markdown-content h2,
+.app-shell.theme-claude .markdown-content h3,
+.app-shell.theme-claude .markdown-content h4,
+.app-shell.theme-claude .markdown-content h5,
+.app-shell.theme-claude .markdown-content h6,
+.app-shell.theme-claude-dark .markdown-content h1,
+.app-shell.theme-claude-dark .markdown-content h2,
+.app-shell.theme-claude-dark .markdown-content h3,
+.app-shell.theme-claude-dark .markdown-content h4,
+.app-shell.theme-claude-dark .markdown-content h5,
+.app-shell.theme-claude-dark .markdown-content h6 {
+  color: var(--text-primary);
+  font-family: "Anthropic Serif", Georgia, serif;
+  font-weight: 500;
+  letter-spacing: normal;
+}
+
+.app-shell.theme-claude .markdown-content h1,
+.app-shell.theme-claude-dark .markdown-content h1 {
+  font-size: 3.25rem;
+  line-height: 1.12;
+}
+
+.app-shell.theme-claude .markdown-content h2,
+.app-shell.theme-claude-dark .markdown-content h2 {
+  font-size: 2.3rem;
+  line-height: 1.2;
+}
+
+.app-shell.theme-claude .markdown-content h3,
+.app-shell.theme-claude-dark .markdown-content h3 {
+  font-size: 2rem;
+  line-height: 1.2;
+}
+
+.app-shell.theme-claude .markdown-content p,
+.app-shell.theme-claude .markdown-content li,
+.app-shell.theme-claude .markdown-content td,
+.app-shell.theme-claude .markdown-content th,
+.app-shell.theme-claude-dark .markdown-content p,
+.app-shell.theme-claude-dark .markdown-content li,
+.app-shell.theme-claude-dark .markdown-content td,
+.app-shell.theme-claude-dark .markdown-content th {
+  color: var(--text-secondary);
+}
+
+.app-shell.theme-claude .markdown-content p,
+.app-shell.theme-claude-dark .markdown-content p {
+  line-height: 1.62;
+}
+
+.app-shell.theme-claude .markdown-content blockquote,
+.app-shell.theme-claude-dark .markdown-content blockquote {
+  border-left: 2px solid var(--btn-bg);
+  background: var(--bg-editor);
+  border-radius: 0.65rem;
+  padding: 0.7rem 0.85rem;
+  box-shadow: var(--border-color) 0 0 0 1px;
+}
+
+.app-shell.theme-claude .markdown-content a,
+.app-shell.theme-claude-dark .markdown-content a {
+  color: var(--accent);
+  text-decoration-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  text-underline-offset: 0.16em;
+}
+
+.app-shell.theme-claude .markdown-content pre,
+.app-shell.theme-claude-dark .markdown-content pre {
+  border: none;
+  box-shadow: var(--code-block-border) 0 0 0 1px;
+}
+
+.app-shell.theme-claude .markdown-content table thead tr,
+.app-shell.theme-claude-dark .markdown-content table thead tr {
+  background: var(--bg-window);
+}
+
+.app-shell.theme-claude .markdown-content table,
+.app-shell.theme-claude-dark .markdown-content table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 0.65rem;
+  overflow: hidden;
+}
+
+.app-shell.theme-claude button:not(.bg-accent),
+.app-shell.theme-claude select,
+.app-shell.theme-claude textarea,
+.app-shell.theme-claude-dark button:not(.bg-accent),
+.app-shell.theme-claude-dark select,
+.app-shell.theme-claude-dark textarea {
+  border-color: transparent;
+  box-shadow: transparent 0 0 0 0, var(--border-color) 0 0 0 1px;
+}
+
+.app-shell.theme-claude button:not(.bg-accent):hover,
+.app-shell.theme-claude select:hover,
+.app-shell.theme-claude-dark button:not(.bg-accent):hover,
+.app-shell.theme-claude-dark select:hover {
+  background: var(--btn-hover);
+  box-shadow: transparent 0 0 0 0, var(--border-color) 0 0 0 1px;
+}
+
+.app-shell.theme-claude button.bg-accent,
+.app-shell.theme-claude-dark button.bg-accent {
+  border-color: transparent;
+  box-shadow: transparent 0 0 0 0, var(--accent) 0 0 0 1px;
+}
+
+.app-shell.theme-claude button:focus-visible,
+.app-shell.theme-claude select:focus-visible,
+.app-shell.theme-claude textarea:focus-visible,
+.app-shell.theme-claude-dark button:focus-visible,
+.app-shell.theme-claude-dark select:focus-visible,
+.app-shell.theme-claude-dark textarea:focus-visible {
+  outline: 2px solid #3898ec;
+  outline-offset: 2px;
+}
+
+.app-shell.theme-claude aside button,
+.app-shell.theme-claude-dark aside button {
+  border-color: transparent !important;
+  background: transparent !important;
+  color: var(--text-secondary) !important;
+  box-shadow: none !important;
+}
+
+.app-shell.theme-claude aside button:hover,
+.app-shell.theme-claude-dark aside button:hover {
+  background: var(--btn-hover) !important;
+  color: var(--text-primary) !important;
+}
+
+.app-shell.theme-claude aside button.bg-accent,
+.app-shell.theme-claude-dark aside button.bg-accent {
+  background: var(--btn-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.app-shell.theme-claude aside button.bg-accent svg,
+.app-shell.theme-claude-dark aside button.bg-accent svg {
+  color: var(--text-primary) !important;
+}
+
+.app-shell.theme-vercel {
+  background: #ffffff;
+  color: #171717;
+  font-family: "Geist", "Inter", "SF Pro Display", system-ui, sans-serif;
+  font-feature-settings: "liga" 1;
+}
+
+.app-shell.theme-hc {
+  background: #000000;
+  color: #ffffff;
+}
+
+.app-shell.theme-hc header,
+.app-shell.theme-hc aside,
+.app-shell.theme-hc .bg-editor,
+.app-shell.theme-hc .bg-preview {
+  background: #000000;
+}
+
+.app-shell.theme-hc header {
+  border-bottom: none;
+  box-shadow: #ffffff 0 0 0 1px;
+}
+
+.app-shell.theme-hc aside {
+  border-right: none;
+  box-shadow: #ffffff 1px 0 0 0;
+}
+
+.app-shell.theme-hc button,
+.app-shell.theme-hc select,
+.app-shell.theme-hc textarea {
+  background: #000000;
+  color: #ffffff;
+  border-color: #ffffff;
+  box-shadow: none;
+}
+
+.app-shell.theme-hc button:hover,
+.app-shell.theme-hc select:hover {
+  background: #111111;
+}
+
+.app-shell.theme-hc button:focus-visible,
+.app-shell.theme-hc select:focus-visible,
+.app-shell.theme-hc textarea:focus-visible {
+  outline: 2px solid #00ffff;
+  outline-offset: 2px;
+}
+
+.app-shell.theme-hc button.bg-accent {
+  background: #00ffff !important;
+  color: #000000 !important;
+  border-color: #00ffff !important;
+}
+
+.app-shell.theme-hc button.bg-accent svg {
+  color: #000000 !important;
+}
+
+.app-shell.theme-hc [data-view-toggle-group="true"] {
+  background: #000000;
+  border-color: #ffffff;
+}
+
+.app-shell.theme-hc [data-view-toggle="true"][data-active="true"] {
+  background: #ffff00 !important;
+  color: #000000 !important;
+  border-color: #ffff00 !important;
+}
+
+.app-shell.theme-hc [data-view-toggle="true"][data-active="true"] svg {
+  color: #000000 !important;
+}
+
+.app-shell.theme-hc [data-view-toggle="true"][data-active="false"] {
+  background: transparent !important;
+  color: #ffff00 !important;
+}
+
+.app-shell.theme-hc [data-view-toggle="true"][data-active="false"]:hover {
+  background: #111111 !important;
+  color: #ffff00 !important;
+}
+
+.app-shell.theme-hc [data-view-toggle="true"][data-active="false"] svg {
+  color: #ffff00 !important;
+}
+
+.app-shell.theme-vercel header,
+.app-shell.theme-vercel aside,
+.app-shell.theme-vercel .bg-editor,
+.app-shell.theme-vercel .bg-preview {
+  background: #ffffff;
+}
+
+.app-shell.theme-vercel header {
+  border-bottom: none;
+  box-shadow:
+    rgba(0, 0, 0, 0.08) 0 0 0 1px,
+    rgba(0, 0, 0, 0.03) 0 8px 24px -18px;
+}
+
+.app-shell.theme-vercel aside {
+  border-right: none;
+  box-shadow: rgba(0, 0, 0, 0.08) 1px 0 0 0;
+}
+
+.app-shell.theme-vercel button,
+.app-shell.theme-vercel select,
+.app-shell.theme-vercel textarea {
+  border-color: #ebebeb;
+  border-radius: 0.375rem;
+  background: #ffffff;
+  box-shadow:
+    rgba(0, 0, 0, 0.08) 0 0 0 1px,
+    rgba(0, 0, 0, 0.04) 0 2px 2px;
+}
+
+.app-shell.theme-vercel button:hover,
+.app-shell.theme-vercel select:hover {
+  box-shadow:
+    rgba(0, 0, 0, 0.08) 0 0 0 1px,
+    rgba(0, 0, 0, 0.04) 0 2px 2px,
+    rgba(0, 0, 0, 0.04) 0 8px 8px -8px;
+}
+
+.app-shell.theme-vercel button:focus-visible,
+.app-shell.theme-vercel select:focus-visible,
+.app-shell.theme-vercel textarea:focus-visible {
+  outline: 2px solid hsla(212, 100%, 48%, 1);
+  outline-offset: 2px;
+}
+
+.app-shell.theme-vercel button.bg-accent {
+  background: #171717 !important;
+  color: #ffffff !important;
+  border-color: #171717 !important;
+  box-shadow:
+    rgba(0, 0, 0, 0.08) 0 0 0 1px,
+    rgba(0, 0, 0, 0.04) 0 2px 2px !important;
+}
+
+.app-shell.theme-vercel button.bg-accent:hover {
+  background: #0a0a0a !important;
+  border-color: #0a0a0a !important;
+  box-shadow:
+    rgba(0, 0, 0, 0.08) 0 0 0 1px,
+    rgba(0, 0, 0, 0.04) 0 2px 2px,
+    rgba(0, 0, 0, 0.04) 0 8px 8px -8px !important;
+}
+
+.app-shell.theme-vercel button.bg-accent svg {
+  color: #ffffff !important;
+}
+
+.app-shell.theme-vercel .markdown-content {
+  font-feature-settings: "liga" 1;
+}
+
+.app-shell.theme-vercel .markdown-content h1,
+.app-shell.theme-vercel .markdown-content h2,
+.app-shell.theme-vercel .markdown-content h3,
+.app-shell.theme-vercel .markdown-content h4,
+.app-shell.theme-vercel .markdown-content h5,
+.app-shell.theme-vercel .markdown-content h6 {
+  color: #171717;
+  font-weight: 600;
+  letter-spacing: -0.06em;
+  border-bottom-color: #171717;
+}
+
+.app-shell.theme-vercel .markdown-content h1 {
+  font-size: 2.95rem;
+  line-height: 1.02;
+  letter-spacing: -0.06em;
+}
+
+.app-shell.theme-vercel .markdown-content h2 {
+  font-size: 2rem;
+  line-height: 1.1;
+  letter-spacing: -0.05em;
+}
+
+.app-shell.theme-vercel .markdown-content p,
+.app-shell.theme-vercel .markdown-content li,
+.app-shell.theme-vercel .markdown-content td,
+.app-shell.theme-vercel .markdown-content th {
+  color: #4d4d4d;
+}
+
+.app-shell.theme-vercel .markdown-content a {
+  color: #0072f5;
+  text-decoration-color: rgba(0, 114, 245, 0.4);
+  text-underline-offset: 0.16em;
+}
+
+.app-shell.theme-vercel .markdown-content blockquote {
+  border-left: 2px solid #171717;
+  background: #fafafa;
+  border-radius: 0.5rem;
+  padding: 0.7rem 0.85rem;
+  box-shadow: rgba(0, 0, 0, 0.08) 0 0 0 1px;
+}
+
+.app-shell.theme-vercel .markdown-content pre {
+  border: none;
+  border-radius: 0.5rem;
+  box-shadow:
+    rgba(0, 0, 0, 0.08) 0 0 0 1px,
+    rgba(0, 0, 0, 0.04) 0 2px 2px,
+    rgba(0, 0, 0, 0.04) 0 8px 8px -8px,
+    #fafafa 0 0 0 1px inset;
+}
+
+.app-shell.theme-vercel .markdown-content table {
+  border-collapse: separate;
+  border-spacing: 0;
+  box-shadow: rgba(0, 0, 0, 0.08) 0 0 0 1px;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.app-shell.theme-vercel .markdown-content table thead tr {
+  background: #fafafa;
+}
+
+.app-shell.theme-vercel .markdown-content hr {
+  border-color: #171717;
+}
+
+.app-shell.theme-vercel aside button {
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.app-shell.theme-vercel aside button:hover {
+  background: #fafafa !important;
+}
+
+.app-shell.theme-vercel aside button.bg-accent {
+  background: #171717 !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.app-shell.theme-vercel aside button.bg-accent svg {
+  color: #ffffff !important;
+}
+
+.app-shell.theme-lovable {
+  background:
+    radial-gradient(circle at 10% 0%, rgba(255, 194, 150, 0.28), transparent 28%),
+    radial-gradient(circle at 86% 8%, rgba(143, 124, 255, 0.18), transparent 24%),
+    radial-gradient(circle at 78% 18%, rgba(128, 206, 255, 0.14), transparent 20%),
+    linear-gradient(180deg, rgba(252, 251, 248, 0.94), rgba(247, 244, 237, 0.98));
+  color: #1c1c1c;
+  font-family: "Camera Plain Variable", "Aptos", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+}
+
+.app-shell.theme-lovable header,
+.app-shell.theme-lovable aside,
+.app-shell.theme-lovable .bg-editor,
+.app-shell.theme-lovable .bg-preview {
+  background: #f7f4ed;
+}
+
+.app-shell.theme-lovable header {
+  border-bottom: none;
+  box-shadow: inset 0 -1px 0 #eceae4;
+}
+
+.app-shell.theme-lovable aside {
+  border-right: none;
+  box-shadow: inset -1px 0 0 #eceae4;
+}
+
+.app-shell.theme-lovable button:not(.bg-accent),
+.app-shell.theme-lovable select {
+  border-color: rgba(28, 28, 28, 0.4);
+  box-shadow: none;
+}
+
+.app-shell.theme-lovable button:not(.bg-accent):hover,
+.app-shell.theme-lovable select:hover {
+  background: rgba(28, 28, 28, 0.04);
+}
+
+.app-shell.theme-lovable button.bg-accent {
+  border-color: #1c1c1c;
+  background: #1c1c1c;
+  color: #fcfbf8;
+  box-shadow:
+    rgba(255, 255, 255, 0.2) 0 0.5px 0 0 inset,
+    rgba(0, 0, 0, 0.2) 0 0 0 0.5px inset,
+    rgba(0, 0, 0, 0.05) 0 1px 2px 0;
+}
+
+.app-shell.theme-lovable textarea {
+  border-radius: 1rem;
+  box-shadow: inset 0 0 0 1px #eceae4;
+}
+
+.app-shell.theme-lovable .markdown-content {
+  color: #1c1c1c;
+  letter-spacing: 0;
+}
+
+.app-shell.theme-lovable .markdown-content h1,
+.app-shell.theme-lovable .markdown-content h2,
+.app-shell.theme-lovable .markdown-content h3,
+.app-shell.theme-lovable .markdown-content h4,
+.app-shell.theme-lovable .markdown-content h5,
+.app-shell.theme-lovable .markdown-content h6 {
+  color: #1c1c1c;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+
+.app-shell.theme-lovable .markdown-content h1 {
+  font-size: 3rem;
+  line-height: 1.02;
+}
+
+.app-shell.theme-lovable .markdown-content h2 {
+  font-size: 2.15rem;
+  line-height: 1.08;
+}
+
+.app-shell.theme-lovable .markdown-content p,
+.app-shell.theme-lovable .markdown-content li,
+.app-shell.theme-lovable .markdown-content td,
+.app-shell.theme-lovable .markdown-content th {
+  color: rgba(28, 28, 28, 0.82);
+}
+
+.app-shell.theme-lovable .markdown-content a {
+  color: #1c1c1c;
+  text-decoration-color: rgba(28, 28, 28, 0.4);
+  text-underline-offset: 0.16em;
+}
+
+.app-shell.theme-lovable .markdown-content blockquote {
+  border-left: 2px solid rgba(28, 28, 28, 0.4);
+  background: rgba(28, 28, 28, 0.03);
+  border-radius: 0.65rem;
+  padding: 0.7rem 0.85rem;
+}
+
+.app-shell.theme-lovable .markdown-content pre {
+  border-radius: 0.625rem;
+  box-shadow: none;
+}
+
+.app-shell.theme-lovable .markdown-content table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid #eceae4;
+  border-radius: 0.65rem;
+  overflow: hidden;
+}
+
+.app-shell.theme-lovable .markdown-content table thead tr {
+  background: rgba(28, 28, 28, 0.03);
+}
+
+.app-shell.theme-lovable .markdown-content hr {
+  border-color: #eceae4;
+}
+
+.app-shell.theme-lovable aside button {
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.app-shell.theme-lovable aside button:hover {
+  background: rgba(28, 28, 28, 0.04) !important;
+}
+
+.app-shell.theme-lovable aside button.bg-accent {
+  background: #1c1c1c !important;
+  color: #fcfbf8 !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.app-shell.theme-lovable aside button.bg-accent svg {
+  color: #fcfbf8 !important;
+}
+
+.app-shell.theme-spotify {
+  background: linear-gradient(180deg, #121212 0%, #181818 100%);
+  color: #ffffff;
+  font-family:
+    "SpotifyMixUI",
+    "CircularSp",
+    "Circular Std",
+    "Helvetica Neue",
+    "PingFang SC",
+    "Hiragino Sans GB",
+    "Microsoft YaHei",
+    system-ui,
+    sans-serif;
+}
+
+.app-shell.theme-spotify header,
+.app-shell.theme-spotify aside,
+.app-shell.theme-spotify .bg-editor,
+.app-shell.theme-spotify .bg-preview {
+  background: #121212;
+}
+
+.app-shell.theme-spotify header {
+  border-bottom: none;
+  box-shadow: rgba(255, 255, 255, 0.08) 0 0 0 1px;
+}
+
+.app-shell.theme-spotify aside {
+  border-right: none;
+  box-shadow: rgba(255, 255, 255, 0.08) 1px 0 0 0;
+}
+
+.app-shell.theme-spotify button:not(.bg-accent),
+.app-shell.theme-spotify select {
+  border-color: transparent;
+  border-radius: 9999px;
+  background: #1f1f1f;
+  color: #ffffff;
+  box-shadow:
+    rgb(18, 18, 18) 0 1px 0,
+    rgb(124, 124, 124) 0 0 0 1px inset,
+    rgba(0, 0, 0, 0.3) 0 8px 8px -8px;
+}
+
+.app-shell.theme-spotify button:not(.bg-accent):hover,
+.app-shell.theme-spotify select:hover {
+  background: #272727;
+  box-shadow:
+    rgb(18, 18, 18) 0 1px 0,
+    rgb(124, 124, 124) 0 0 0 1px inset,
+    rgba(0, 0, 0, 0.5) 0 8px 24px;
+}
+
+.app-shell.theme-spotify textarea {
+  background: #181818;
+  color: #ffffff;
+  border-color: transparent;
+  border-radius: 1rem;
+  box-shadow:
+    rgb(18, 18, 18) 0 1px 0,
+    rgb(124, 124, 124) 0 0 0 1px inset;
+}
+
+.app-shell.theme-spotify button.bg-accent {
+  border-color: transparent !important;
+  background: #1ed760 !important;
+  color: #000000 !important;
+  box-shadow:
+    rgba(0, 0, 0, 0.5) 0 8px 24px,
+    rgba(255, 255, 255, 0.12) 0 0 0 1px inset !important;
+}
+
+.app-shell.theme-spotify button.bg-accent:hover {
+  background: #3be477 !important;
+}
+
+.app-shell.theme-spotify button.bg-accent svg {
+  color: #000000 !important;
+}
+
+.app-shell.theme-spotify button:focus-visible,
+.app-shell.theme-spotify select:focus-visible,
+.app-shell.theme-spotify textarea:focus-visible {
+  outline: 2px solid #1ed760;
+  outline-offset: 2px;
+}
+
+.app-shell.theme-spotify [data-view-toggle-group="true"] {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.app-shell.theme-spotify [data-view-toggle="true"][data-active="true"] {
+  background: #1ed760 !important;
+  color: #000000 !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.app-shell.theme-spotify [data-view-toggle="true"][data-active="true"] svg {
+  color: #000000 !important;
+}
+
+.app-shell.theme-spotify [data-view-toggle="true"][data-active="false"] {
+  background: transparent !important;
+  color: #b3b3b3 !important;
+}
+
+.app-shell.theme-spotify [data-view-toggle="true"][data-active="false"]:hover {
+  background: #272727 !important;
+  color: #ffffff !important;
+}
+
+.app-shell.theme-spotify [data-view-toggle="true"][data-active="false"] svg {
+  color: inherit !important;
+}
+
+.app-shell.theme-spotify [data-toolbar-action="true"] {
+  border-radius: 9999px;
+  box-shadow:
+    rgb(18, 18, 18) 0 1px 0,
+    rgb(124, 124, 124) 0 0 0 1px inset,
+    rgba(0, 0, 0, 0.3) 0 8px 8px -8px;
+}
+
+.app-shell.theme-spotify [data-toolbar-action="true"]:hover {
+  box-shadow:
+    rgb(18, 18, 18) 0 1px 0,
+    rgb(124, 124, 124) 0 0 0 1px inset,
+    rgba(0, 0, 0, 0.5) 0 8px 24px;
+}
+
+.app-shell.theme-spotify button.bg-accent[data-toolbar-action="true"] {
+  box-shadow:
+    rgb(18, 18, 18) 0 1px 0,
+    rgba(255, 255, 255, 0.14) 0 0 0 1px inset,
+    rgba(0, 0, 0, 0.5) 0 8px 24px !important;
+}
+
+.app-shell.theme-spotify button.bg-accent[data-toolbar-action="true"]:hover {
+  box-shadow:
+    rgb(18, 18, 18) 0 1px 0,
+    rgba(255, 255, 255, 0.14) 0 0 0 1px inset,
+    rgba(0, 0, 0, 0.55) 0 8px 24px !important;
+}
+
+.app-shell.theme-spotify .markdown-content {
+  color: #ffffff;
+}
+
+.app-shell.theme-spotify .markdown-content h1,
+.app-shell.theme-spotify .markdown-content h2,
+.app-shell.theme-spotify .markdown-content h3,
+.app-shell.theme-spotify .markdown-content h4,
+.app-shell.theme-spotify .markdown-content h5,
+.app-shell.theme-spotify .markdown-content h6 {
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.app-shell.theme-spotify .markdown-content h1 {
+  font-size: 3rem;
+  line-height: 1.04;
+}
+
+.app-shell.theme-spotify .markdown-content h2 {
+  font-size: 2rem;
+  line-height: 1.1;
+}
+
+.app-shell.theme-spotify .markdown-content p,
+.app-shell.theme-spotify .markdown-content li,
+.app-shell.theme-spotify .markdown-content td,
+.app-shell.theme-spotify .markdown-content th {
+  color: #b3b3b3;
+}
+
+.app-shell.theme-spotify .markdown-content a {
+  color: #1ed760;
+  text-decoration-color: rgba(30, 215, 96, 0.45);
+  text-underline-offset: 0.16em;
+}
+
+.app-shell.theme-spotify .markdown-content blockquote {
+  border-left: 2px solid #1ed760;
+  background: #1f1f1f;
+  border-radius: 0.625rem;
+  padding: 0.7rem 0.85rem;
+  box-shadow: rgba(0, 0, 0, 0.26) 0 6px 10px;
+}
+
+.app-shell.theme-spotify .markdown-content pre {
+  border: none;
+  border-radius: 0.625rem;
+  box-shadow:
+    rgba(0, 0, 0, 0.42) 0 6px 18px,
+    rgba(255, 255, 255, 0.08) 0 0 0 1px inset;
+}
+
+.app-shell.theme-spotify .markdown-content table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid #272727;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.app-shell.theme-spotify .markdown-content table thead tr {
+  background: #1f1f1f;
+}
+
+.app-shell.theme-spotify .markdown-content hr {
+  border-color: #4d4d4d;
+}
+
+.app-shell.theme-spotify aside button {
+  border-color: transparent !important;
+  background: transparent !important;
+  color: #b3b3b3 !important;
+  box-shadow: none !important;
+}
+
+.app-shell.theme-spotify aside button:hover {
+  background: #1f1f1f !important;
+  color: #ffffff !important;
+}
+
+.app-shell.theme-spotify aside button.bg-accent {
+  background: #1ed760 !important;
+  color: #000000 !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.app-shell.theme-spotify aside button.bg-accent svg {
+  color: #000000 !important;
 }
 
 .print-root {
