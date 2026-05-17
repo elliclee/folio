@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PreviewerMD Hash Background Refinement</title>
+    <style>
+      :root {
+        --ink: #171717;
+        --muted: #5b6068;
+        font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at 18% 8%, rgba(255, 209, 92, 0.28), transparent 28%),
+          radial-gradient(circle at 86% 8%, rgba(86, 154, 255, 0.34), transparent 30%),
+          radial-gradient(circle at 54% 88%, rgba(74, 222, 172, 0.3), transparent 36%),
+          linear-gradient(145deg, #fffaf0 0%, #f3f7ff 56%, #f8f5ff 100%);
+        color: var(--ink);
+      }
+
+      main {
+        margin: 0 auto;
+        max-width: 1200px;
+        padding: 30px;
+      }
+
+      header {
+        align-items: end;
+        display: flex;
+        gap: 22px;
+        justify-content: space-between;
+        margin-bottom: 18px;
+      }
+
+      h1 {
+        font-size: 26px;
+        line-height: 1.08;
+        margin: 0;
+      }
+
+      header p {
+        color: #4d5159;
+        font-size: 13px;
+        line-height: 1.55;
+        margin: 8px 0 0;
+        max-width: 780px;
+      }
+
+      .badge {
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid rgba(255, 255, 255, 0.88);
+        border-radius: 999px;
+        box-shadow: 0 10px 28px rgba(49, 43, 35, 0.08);
+        color: #4d5159;
+        font-size: 12px;
+        padding: 7px 12px;
+        white-space: nowrap;
+      }
+
+      .grid {
+        display: grid;
+        gap: 18px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .card {
+        backdrop-filter: blur(18px);
+        background: rgba(255, 255, 255, 0.74);
+        border: 1px solid rgba(255, 255, 255, 0.76);
+        border-radius: 18px;
+        box-shadow: 0 18px 46px rgba(46, 41, 34, 0.11);
+        overflow: hidden;
+      }
+
+      .card-head {
+        min-height: 116px;
+        padding: 16px 16px 12px;
+      }
+
+      h2 {
+        font-size: 15px;
+        margin: 0;
+      }
+
+      .card-head p,
+      .notes p {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+        margin: 6px 0 0;
+      }
+
+      .stage {
+        align-items: center;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.48), rgba(255, 255, 255, 0.24)),
+          radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.95), transparent 46%);
+        border-block: 1px solid rgba(255, 255, 255, 0.62);
+        display: grid;
+        gap: 16px;
+        justify-items: center;
+        padding: 25px 14px 20px;
+      }
+
+      .icon-large {
+        height: 190px;
+        width: 190px;
+      }
+
+      .sizes {
+        align-items: center;
+        background: rgba(255, 255, 255, 0.46);
+        border: 1px solid rgba(255, 255, 255, 0.72);
+        border-radius: 999px;
+        display: flex;
+        gap: 13px;
+        justify-content: center;
+        padding: 8px 14px;
+      }
+
+      .sizes svg:nth-child(1) {
+        height: 58px;
+        width: 58px;
+      }
+
+      .sizes svg:nth-child(2) {
+        height: 32px;
+        width: 32px;
+      }
+
+      .sizes svg:nth-child(3) {
+        height: 18px;
+        width: 18px;
+      }
+
+      .notes {
+        min-height: 104px;
+        padding: 14px 16px 16px;
+      }
+
+      .notes strong {
+        color: var(--ink);
+      }
+
+      @media (max-width: 1180px) {
+        .grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 720px) {
+        main {
+          padding: 20px;
+        }
+
+        header {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <h1>Simple Hash + Decorated Background</h1>
+          <p>Following option D: keep the current green `#` simple and recognizable. These variants only tune the background decoration: glow, soft color patches, paper grain, or subtle prism edge.</p>
+        </div>
+        <span class="badge">Option D refinement · simple mark</span>
+      </header>
+
+      <section class="grid">
+        <article class="card">
+          <div class="card-head">
+            <h2>D1. Soft Glow</h2>
+            <p>Closest to option D, but adds gentle color blooms behind the hash for a richer Dock presence.</p>
+          </div>
+          <div class="stage">
+            <svg class="icon-large" viewBox="0 0 1024 1024" aria-label="Soft Glow hash icon">
+              <defs>
+                <linearGradient id="bg-soft" x1="154" y1="128" x2="876" y2="894" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#FFF8E7"/>
+                  <stop offset=".54" stop-color="#F0F7FF"/>
+                  <stop offset="1" stop-color="#F3E8FF"/>
+                </linearGradient>
+                <radialGradient id="soft-blue" cx="30%" cy="28%" r="52%">
+                  <stop stop-color="#8CB8FF" stop-opacity=".7"/>
+                  <stop offset="1" stop-color="#8CB8FF" stop-opacity="0"/>
+                </radialGradient>
+                <radialGradient id="soft-mint" cx="68%" cy="70%" r="52%">
+                  <stop stop-color="#9DF4D7" stop-opacity=".72"/>
+                  <stop offset="1" stop-color="#9DF4D7" stop-opacity="0"/>
+                </radialGradient>
+                <radialGradient id="soft-peach" cx="78%" cy="28%" r="44%">
+                  <stop stop-color="#FFD2A3" stop-opacity=".64"/>
+                  <stop offset="1" stop-color="#FFD2A3" stop-opacity="0"/>
+                </radialGradient>
+                <linearGradient id="mark" x1="306" y1="322" x2="718" y2="702" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#168C76"/>
+                  <stop offset="1" stop-color="#0D5E51"/>
+                </linearGradient>
+                <filter id="mark-shadow" x="-30%" y="-30%" width="160%" height="160%">
+                  <feDropShadow dx="0" dy="24" stdDeviation="22" flood-color="#12352E" flood-opacity=".18"/>
+                  <feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#FFFFFF" flood-opacity=".86"/>
+                </filter>
+              </defs>
+              <rect x="112" y="112" width="800" height="800" rx="218" fill="url(#bg-soft)"/>
+              <rect x="112" y="112" width="800" height="800" rx="218" fill="url(#soft-blue)"/>
+              <rect x="112" y="112" width="800" height="800" rx="218" fill="url(#soft-mint)"/>
+              <rect x="112" y="112" width="800" height="800" rx="218" fill="url(#soft-peach)"/>
+              <g filter="url(#mark-shadow)">
+                <line x1="392" y1="326" x2="392" y2="698" stroke="url(#mark)" stroke-width="72" stroke-linecap="round"/>
+                <line x1="632" y1="326" x2="632" y2="698" stroke="url(#mark)" stroke-width="72" stroke-linecap="round"/>
+                <line x1="306" y1="436" x2="718" y2="436" stroke="url(#mark)" stroke-width="72" stroke-linecap="round"/>
+                <line x1="306" y1="588" x2="718" y2="588" stroke="url(#mark)" stroke-width="72" stroke-linecap="round"/>
+              </g>
+            </svg>
+            <div class="sizes">
+              <svg viewBox="0 0 1024 1024"><use href="#small-soft"/></svg>
+              <svg viewBox="0 0 1024 1024"><use href="#small-soft"/></svg>
+              <svg viewBox="0 0 1024 1024"><use href="#small-soft"/></svg>
+            </div>
+          </div>
+          <div class="notes">
+            <p><strong>Character:</strong> soft, clean, safest.</p>
+            <p><strong>Decoration:</strong> only background color blooms.</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-head">
+            <h2>D2. Prism Wash</h2>
+            <p>Adds a diagonal prism wash to the background. The hash stays unchanged and readable.</p>
+          </div>
+          <div class="stage">
+            <svg class="icon-large" viewBox="0 0 1024 1024" aria-label="Prism Wash hash icon">
+              <defs>
+                <linearGradient id="bg-prism" x1="154" y1="128" x2="876" y2="894" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#FFF8E7"/>
+                  <stop offset=".54" stop-color="#F0F7FF"/>
+                  <stop offset="1" stop-color="#F3E8FF"/>
+                </linearGradient>
+                <linearGradient id="wash" x1="216" y1="242" x2="800" y2="780" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#6EA4FF" stop-opacity=".52"/>
+                  <stop offset=".48" stop-color="#C7A6FF" stop-opacity=".32"/>
+                  <stop offset="1" stop-color="#9DF4D7" stop-opacity=".56"/>
+                </linearGradient>
+                <linearGradient id="mark2" x1="306" y1="322" x2="718" y2="702" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#168C76"/>
+                  <stop offset="1" stop-color="#0D5E51"/>
+                </linearGradient>
+                <filter id="mark-shadow2" x="-30%" y="-30%" width="160%" height="160%">
+                  <feDropShadow dx="0" dy="24" stdDeviation="22" flood-color="#12352E" flood-opacity=".18"/>
+                  <feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#FFFFFF" flood-opacity=".86"/>
+                </filter>
+              </defs>
+              <rect x="112" y="112" width="800" height="800" rx="218" fill="url(#bg-prism)"/>
+              <path d="M178 720 718 156c86 38 156 104 194 188L356 888c-78-28-142-86-178-168Z" fill="url(#wash)"/>
+              <path d="M160 420c118 26 220 8 330-64 92-60 172-82 292-66-86-102-224-164-370-138-128 22-224 124-252 268Z" fill="#FFFFFF" opacity=".28"/>
+              <g filter="url(#mark-shadow2)">
+                <line x1="392" y1="326" x2="392" y2="698" stroke="url(#mark2)" stroke-width="72" stroke-linecap="round"/>
+                <line x1="632" y1="326" x2="632" y2="698" stroke="url(#mark2)" stroke-width="72" stroke-linecap="round"/>
+                <line x1="306" y1="436" x2="718" y2="436" stroke="url(#mark2)" stroke-width="72" stroke-linecap="round"/>
+                <line x1="306" y1="588" x2="718" y2="588" stroke="url(#mark2)" stroke-width="72" stroke-linecap="round"/>
+              </g>
+            </svg>
+            <div class="sizes">
+              <svg viewBox="0 0 1024 1024"><use href="#small-prism"/></svg>
+              <svg viewBox="0 0 1024 1024"><use href="#small-prism"/></svg>
+              <svg viewBox="0 0 1024 1024"><use href="#small-prism"/></svg>
+            </div>
+          </div>
+          <div class="notes">
+            <p><strong>Character:</strong> more dynamic.</p>
+            <p><strong>Decoration:</strong> diagonal background energy.</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-head">
+            <h2>D3. Paper Bloom</h2>
+            <p>Warmer, more editorial. Background uses paper-like peach and mint blooms under the green hash.</p>
+          </div>
+          <div class="stage">
+            <svg class="icon-large" viewBox="0 0 1024 1024" aria-label="Paper Bloom hash icon">
+              <defs>
+                <linearGradient id="bg-paper" x1="154" y1="128" x2="876" y2="894" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#FFF6E7"/>
+                  <stop offset=".52" stop-color="#F8F4EA"/>
+                  <stop offset="1" stop-color="#EFFFF8"/>
+                </linearGradient>
+                <radialGradient id="paper-peach" cx="36%" cy="32%" r="48%">
+                  <stop stop-color="#FFD2A3" stop-opacity=".76"/>
+                  <stop offset="1" stop-color="#FFD2A3" stop-opacity="0"/>
+                </radialGradient>
+                <radialGradient id="paper-mint" cx="70%" cy="70%" r="54%">
+                  <stop stop-color="#BAF7DD" stop-opacity=".72"/>
+                  <stop offset="1" stop-color="#BAF7DD" stop-opacity="0"/>
+                </radialGradient>
+                <pattern id="grain" width="28" height="28" patternUnits="userSpaceOnUse">
+                  <circle cx="7" cy="10" r="1.4" fill="#FFFFFF" opacity=".22"/>
+                  <circle cx="20" cy="19" r="1.1" fill="#8B7D6D" opacity=".06"/>
+                </pattern>
+                <linearGradient id="mark3" x1="306" y1="322" x2="718" y2="702" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#168C76"/>
+                  <stop offset="1" stop-color="#0D5E51"/>
+                </linearGradient>
+                <filter id="mark-shadow3" x="-30%" y="-30%" width="160%" height="160%">
+                  <feDropShadow dx="0" dy="24" stdDeviation="22" flood-color="#12352E" flood-opacity=".16"/>
+                  <feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#FFFFFF" flood-opacity=".86"/>
+                </filter>
+              </defs>
+              <rect x="112" y="112" width="800" height="800" rx="218" fill="url(#bg-paper)"/>
+              <rect x="112" y="112" width="800" height="800" rx="218" fill="url(#paper-peach)"/>
+              <rect x="112" y="112" width="800" height="800" rx="218" fill="url(#paper-mint)"/>
+              <rect x="112" y="112" width="800" height="800" rx="218" fill="url(#grain)"/>
+              <g filter="url(#mark-shadow3)">
+                <line x1="392" y1="326" x2="392" y2="698" stroke="url(#mark3)" stroke-width="72" stroke-linecap="round"/>
+                <line x1="632" y1="326" x2="632" y2="698" stroke="url(#mark3)" stroke-width="72" stroke-linecap="round"/>
+                <line x1="306" y1="436" x2="718" y2="436" stroke="url(#mark3)" stroke-width="72" stroke-linecap="round"/>
+                <line x1="306" y1="588" x2="718" y2="588" stroke="url(#mark3)" stroke-width="72" stroke-linecap="round"/>
+              </g>
+            </svg>
+            <div class="sizes">
+              <svg viewBox="0 0 1024 1024"><use href="#small-paper"/></svg>
+              <svg viewBox="0 0 1024 1024"><use href="#small-paper"/></svg>
+              <svg viewBox="0 0 1024 1024"><use href="#small-paper"/></svg>
+            </div>
+          </div>
+          <div class="notes">
+            <p><strong>Character:</strong> warm and editorial.</p>
+            <p><strong>Decoration:</strong> color blooms plus tiny grain.</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-head">
+            <h2>D4. Halo Hash</h2>
+            <p>Most minimal: a clean D1-like ground with a subtle halo around the hash for depth.</p>
+          </div>
+          <div class="stage">
+            <svg class="icon-large" viewBox="0 0 1024 1024" aria-label="Halo Hash icon">
+              <defs>
+                <linearGradient id="bg-halo" x1="154" y1="128" x2="876" y2="894" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#FFF8E7"/>
+                  <stop offset=".54" stop-color="#F0F7FF"/>
+                  <stop offset="1" stop-color="#F3E8FF"/>
+                </linearGradient>
+                <radialGradient id="halo" cx="50%" cy="52%" r="44%">
+                  <stop stop-color="#D9FFF2" stop-opacity=".9"/>
+                  <stop offset=".46" stop-color="#FFFFFF" stop-opacity=".62"/>
+                  <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+                </radialGradient>
+                <linearGradient id="mark4" x1="306" y1="322" x2="718" y2="702" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#168C76"/>
+                  <stop offset="1" stop-color="#0D5E51"/>
+                </linearGradient>
+                <filter id="mark-shadow4" x="-30%" y="-30%" width="160%" height="160%">
+                  <feDropShadow dx="0" dy="24" stdDeviation="22" flood-color="#12352E" flood-opacity=".18"/>
+                  <feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#FFFFFF" flood-opacity=".86"/>
+                </filter>
+              </defs>
+              <rect x="112" y="112" width="800" height="800" rx="218" fill="url(#bg-halo)"/>
+              <rect x="112" y="112" width="800" height="800" rx="218" fill="url(#halo)"/>
+              <g filter="url(#mark-shadow4)">
+                <line x1="392" y1="326" x2="392" y2="698" stroke="url(#mark4)" stroke-width="72" stroke-linecap="round"/>
+                <line x1="632" y1="326" x2="632" y2="698" stroke="url(#mark4)" stroke-width="72" stroke-linecap="round"/>
+                <line x1="306" y1="436" x2="718" y2="436" stroke="url(#mark4)" stroke-width="72" stroke-linecap="round"/>
+                <line x1="306" y1="588" x2="718" y2="588" stroke="url(#mark4)" stroke-width="72" stroke-linecap="round"/>
+              </g>
+            </svg>
+            <div class="sizes">
+              <svg viewBox="0 0 1024 1024"><use href="#small-halo"/></svg>
+              <svg viewBox="0 0 1024 1024"><use href="#small-halo"/></svg>
+              <svg viewBox="0 0 1024 1024"><use href="#small-halo"/></svg>
+            </div>
+          </div>
+          <div class="notes">
+            <p><strong>Character:</strong> cleanest and quietest.</p>
+            <p><strong>Decoration:</strong> just background and center halo.</p>
+          </div>
+        </article>
+      </section>
+
+      <svg width="0" height="0" style="position:absolute">
+        <symbol id="small-soft" viewBox="0 0 1024 1024">
+          <rect x="112" y="112" width="800" height="800" rx="218" fill="#F0F7FF"/>
+          <circle cx="360" cy="350" r="260" fill="#8CB8FF" opacity=".44"/>
+          <circle cx="660" cy="650" r="270" fill="#9DF4D7" opacity=".55"/>
+          <circle cx="720" cy="350" r="220" fill="#FFD2A3" opacity=".4"/>
+          <line x1="392" y1="326" x2="392" y2="698" stroke="#168C76" stroke-width="72" stroke-linecap="round"/>
+          <line x1="632" y1="326" x2="632" y2="698" stroke="#0D5E51" stroke-width="72" stroke-linecap="round"/>
+          <line x1="306" y1="436" x2="718" y2="436" stroke="#168C76" stroke-width="72" stroke-linecap="round"/>
+          <line x1="306" y1="588" x2="718" y2="588" stroke="#0D5E51" stroke-width="72" stroke-linecap="round"/>
+        </symbol>
+        <symbol id="small-prism" viewBox="0 0 1024 1024">
+          <rect x="112" y="112" width="800" height="800" rx="218" fill="#F0F7FF"/>
+          <path d="M178 720 718 156c86 38 156 104 194 188L356 888c-78-28-142-86-178-168Z" fill="#9DF4D7" opacity=".56"/>
+          <path d="M160 420c118 26 220 8 330-64 92-60 172-82 292-66-86-102-224-164-370-138-128 22-224 124-252 268Z" fill="#FFFFFF" opacity=".28"/>
+          <line x1="392" y1="326" x2="392" y2="698" stroke="#168C76" stroke-width="72" stroke-linecap="round"/>
+          <line x1="632" y1="326" x2="632" y2="698" stroke="#0D5E51" stroke-width="72" stroke-linecap="round"/>
+          <line x1="306" y1="436" x2="718" y2="436" stroke="#168C76" stroke-width="72" stroke-linecap="round"/>
+          <line x1="306" y1="588" x2="718" y2="588" stroke="#0D5E51" stroke-width="72" stroke-linecap="round"/>
+        </symbol>
+        <symbol id="small-paper" viewBox="0 0 1024 1024">
+          <rect x="112" y="112" width="800" height="800" rx="218" fill="#F8F4EA"/>
+          <circle cx="390" cy="360" r="250" fill="#FFD2A3" opacity=".52"/>
+          <circle cx="680" cy="670" r="280" fill="#BAF7DD" opacity=".6"/>
+          <line x1="392" y1="326" x2="392" y2="698" stroke="#168C76" stroke-width="72" stroke-linecap="round"/>
+          <line x1="632" y1="326" x2="632" y2="698" stroke="#0D5E51" stroke-width="72" stroke-linecap="round"/>
+          <line x1="306" y1="436" x2="718" y2="436" stroke="#168C76" stroke-width="72" stroke-linecap="round"/>
+          <line x1="306" y1="588" x2="718" y2="588" stroke="#0D5E51" stroke-width="72" stroke-linecap="round"/>
+        </symbol>
+        <symbol id="small-halo" viewBox="0 0 1024 1024">
+          <rect x="112" y="112" width="800" height="800" rx="218" fill="#F0F7FF"/>
+          <circle cx="512" cy="530" r="280" fill="#D9FFF2" opacity=".74"/>
+          <line x1="392" y1="326" x2="392" y2="698" stroke="#168C76" stroke-width="72" stroke-linecap="round"/>
+          <line x1="632" y1="326" x2="632" y2="698" stroke="#0D5E51" stroke-width="72" stroke-linecap="round"/>
+          <line x1="306" y1="436" x2="718" y2="436" stroke="#168C76" stroke-width="72" stroke-linecap="round"/>
+          <line x1="306" y1="588" x2="718" y2="588" stroke="#0D5E51" stroke-width="72" stroke-linecap="round"/>
+        </symbol>
+      </svg>
+    </main>
+  </body>
+</html>

@@ -1,20 +1,33 @@
 <svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="bg" x1="176" y1="148" x2="848" y2="876" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#F0FFF8"/>
-      <stop offset="1" stop-color="#D8F1E8"/>
+    <linearGradient id="bg" x1="154" y1="128" x2="876" y2="894" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF8E7"/>
+      <stop offset="0.54" stop-color="#F0F7FF"/>
+      <stop offset="1" stop-color="#F3E8FF"/>
     </linearGradient>
+    <radialGradient id="halo" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(512 530) rotate(90) scale(280)">
+      <stop stop-color="#D9FFF2" stop-opacity="0.9"/>
+      <stop offset="0.46" stop-color="#FFFFFF" stop-opacity="0.62"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
     <linearGradient id="mark" x1="306" y1="322" x2="718" y2="702" gradientUnits="userSpaceOnUse">
       <stop stop-color="#168C76"/>
       <stop offset="1" stop-color="#0D5E51"/>
     </linearGradient>
+    <filter id="markShadow" x="160" y="180" width="704" height="660" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="24" stdDeviation="22" flood-color="#12352E" flood-opacity="0.18"/>
+      <feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#FFFFFF" flood-opacity="0.86"/>
+    </filter>
   </defs>
 
-  <rect x="112" y="112" width="800" height="800" rx="208" fill="url(#bg)"/>
-  <rect x="112" y="112" width="800" height="800" rx="208" stroke="#FFFFFF" stroke-opacity="0.72" stroke-width="24"/>
+  <rect x="112" y="112" width="800" height="800" rx="218" fill="url(#bg)"/>
+  <rect x="112" y="112" width="800" height="800" rx="218" fill="url(#halo)"/>
+  <rect x="112" y="112" width="800" height="800" rx="218" stroke="#FFFFFF" stroke-opacity="0.66" stroke-width="24"/>
 
-  <line x1="392" y1="326" x2="392" y2="698" stroke="url(#mark)" stroke-width="72" stroke-linecap="round"/>
-  <line x1="632" y1="326" x2="632" y2="698" stroke="url(#mark)" stroke-width="72" stroke-linecap="round"/>
-  <line x1="306" y1="436" x2="718" y2="436" stroke="url(#mark)" stroke-width="72" stroke-linecap="round"/>
-  <line x1="306" y1="588" x2="718" y2="588" stroke="url(#mark)" stroke-width="72" stroke-linecap="round"/>
+  <g filter="url(#markShadow)">
+    <line x1="392" y1="326" x2="392" y2="698" stroke="url(#mark)" stroke-width="72" stroke-linecap="round"/>
+    <line x1="632" y1="326" x2="632" y2="698" stroke="url(#mark)" stroke-width="72" stroke-linecap="round"/>
+    <line x1="306" y1="436" x2="718" y2="436" stroke="url(#mark)" stroke-width="72" stroke-linecap="round"/>
+    <line x1="306" y1="588" x2="718" y2="588" stroke="url(#mark)" stroke-width="72" stroke-linecap="round"/>
+  </g>
 </svg>
