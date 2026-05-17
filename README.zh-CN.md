@@ -3,13 +3,26 @@
 [English](README.md) | [简体中文](README.zh-CN.md) | [日本語](README.ja.md)
 
 PreviewerMD 是一个本地优先的 Markdown 阅读器和轻量编辑器，基于 React、
-TypeScript、Vite 和 Tauri 构建。本文档聚焦桌面版应用。
+TypeScript、Vite 和 Tauri 构建。它重点优化长文阅读体验，提供多套适合
+不同写作风格、光线环境和夜间使用的视觉主题。本文档聚焦桌面版应用。
 
 ## 截图
 
 ![PreviewerMD 预览模式](docs/screenshots/previewermd-preview.jpg)
 
 ![PreviewerMD 分栏编辑与预览模式](docs/screenshots/previewermd-split-view.jpg)
+
+### 主题展示
+
+PreviewerMD 内置多套面向阅读的主题，从清爽浅色、柔和编辑风，到夜间深色和
+高对比风格都可以覆盖。主题可以从顶部工具栏切换，并会作用于整个阅读界面，
+不只是正文区域。
+
+![PreviewerMD Claude Dark 主题](docs/screenshots/previewermd-theme-claude-dark.jpg)
+
+![PreviewerMD Lovable 主题](docs/screenshots/previewermd-theme-lovable.jpg)
+
+![PreviewerMD Spotify 主题](docs/screenshots/previewermd-theme-spotify.jpg)
 
 ## 项目状态
 
@@ -31,6 +44,7 @@ PreviewerMD 已可用于本地开发和打包。当前发布目标是桌面版�
 - 将确认后的编辑保存回磁盘。
 - 在当前文档内搜索。
 - 打印或导出渲染后的 Markdown。
+- 从多套阅读主题中选择，包括浅色、深色、编辑风和高对比风格，适应不同使用环境。
 - 保留接近原生桌面应用的窗口行为和主题选择。
 - 在系统终端中打开当前文件夹。
 

@@ -3,13 +3,27 @@
 [English](README.md) | [简体中文](README.zh-CN.md) | [日本語](README.ja.md)
 
 PreviewerMD is a local-first Markdown reader and lightweight editor built with
-React, TypeScript, Vite, and Tauri. This README focuses on the desktop app.
+React, TypeScript, Vite, and Tauri. It focuses on comfortable long-form reading
+with multiple visual themes for different writing styles, lighting conditions,
+and night-time use. This README focuses on the desktop app.
 
 ## Screenshots
 
 ![PreviewerMD preview mode](docs/screenshots/previewermd-preview.jpg)
 
 ![PreviewerMD split editor and preview mode](docs/screenshots/previewermd-split-view.jpg)
+
+### Theme Gallery
+
+PreviewerMD includes several reading-oriented themes, from calm light modes to
+dark editorial layouts and high-contrast styles. Themes are available from the
+top toolbar and apply to the full reading shell, not just the document body.
+
+![PreviewerMD Claude Dark theme](docs/screenshots/previewermd-theme-claude-dark.jpg)
+
+![PreviewerMD Lovable theme](docs/screenshots/previewermd-theme-lovable.jpg)
+
+![PreviewerMD Spotify theme](docs/screenshots/previewermd-theme-spotify.jpg)
 
 ## Status
 
@@ -32,6 +46,8 @@ current release target.
 - Save intentional edits back to disk.
 - Search within the current document.
 - Print or export rendered Markdown.
+- Choose from multiple reading themes, including light, dark, editorial, and
+  high-contrast styles for different environments.
 - Preserve native-feeling window behavior and theme choices.
 - Open the active folder in the system terminal.
 

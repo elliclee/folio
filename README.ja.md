@@ -3,7 +3,8 @@
 [English](README.md) | [简体中文](README.zh-CN.md) | [日本語](README.ja.md)
 
 PreviewerMD は、React、TypeScript、Vite、Tauri で構築されたローカル
-ファーストの Markdown リーダー兼軽量エディターです。この README は
+ファーストの Markdown リーダー兼軽量エディターです。長文を快適に読むために、
+文体、利用環境、夜間利用に合わせた複数の視覚テーマを備えています。この README は
 デスクトップアプリを対象にしています。
 
 ## スクリーンショット
@@ -11,6 +12,18 @@ PreviewerMD は、React、TypeScript、Vite、Tauri で構築されたローカ�
 ![PreviewerMD のプレビューモード](docs/screenshots/previewermd-preview.jpg)
 
 ![PreviewerMD のエディター/プレビュー分割表示](docs/screenshots/previewermd-split-view.jpg)
+
+### テーマギャラリー
+
+PreviewerMD には、読みやすさを重視した複数のテーマが用意されています。落ち着いた
+ライトテーマ、エディトリアルな表示、夜間向けのダークテーマ、高コントラスト表示まで、
+上部ツールバーから切り替えられます。テーマは本文だけでなく、読書シェル全体に適用されます。
+
+![PreviewerMD Claude Dark テーマ](docs/screenshots/previewermd-theme-claude-dark.jpg)
+
+![PreviewerMD Lovable テーマ](docs/screenshots/previewermd-theme-lovable.jpg)
+
+![PreviewerMD Spotify テーマ](docs/screenshots/previewermd-theme-spotify.jpg)
 
 ## ステータス
 
@@ -33,6 +46,8 @@ PreviewerMD はローカル開発とパッケージングに利用できます�
 - 意図した編集内容をディスクへ保存する。
 - 現在のドキュメント内を検索する。
 - レンダリング済み Markdown を印刷またはエクスポートする。
+- ライト、ダーク、エディトリアル、高コントラストなど、利用環境に合わせた
+  複数の読書テーマを選択する。
 - ネイティブアプリに近いウィンドウ挙動とテーマ選択を保持する。
 - アクティブなフォルダーをシステムターミナルで開く。
 
