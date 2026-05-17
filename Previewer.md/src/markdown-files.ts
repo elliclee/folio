@@ -124,3 +124,23 @@ export function getFirstMarkdownFile(tree: MarkdownTreeNode[]): MarkdownFileItem
 
   return null;
 }
+
+function getDirectoryName(path: string) {
+  const normalizedPath = path.replace(/[\\/]+$/, '');
+  const segments = normalizedPath.split(/[\\/]/);
+  return segments.at(-1) || normalizedPath || path;
+}
+
+export function wrapMarkdownTreeInRootDirectory(
+  directoryPath: string,
+  children: MarkdownTreeNode[],
+): MarkdownTreeNode[] {
+  return [
+    {
+      type: 'directory',
+      name: getDirectoryName(directoryPath),
+      path: directoryPath,
+      children,
+    },
+  ];
+}

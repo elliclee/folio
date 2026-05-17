@@ -1,6 +1,6 @@
 # PreviewerMD
 
-PreviewerMD is a Tauri desktop app for reading and lightly editing Markdown files with a native-feeling shell. It keeps the main workflow focused on Markdown preview, folder navigation, native file access, print/export, document search, and hand-off actions such as opening the current folder in the system terminal.
+PreviewerMD is a Tauri desktop app for reading and lightly editing Markdown files with a native-feeling shell. It keeps the main workflow focused on Markdown preview, folder navigation, pinned workspaces, recent folder access, native file access, print/export, document search, and hand-off actions such as opening the current folder in the system terminal.
 
 ## Development
 
@@ -37,6 +37,10 @@ Run this checklist before tagging, sharing, or packaging a new desktop build:
    ```
 6. Smoke-test the generated app manually:
    - Open a Markdown file and a folder.
+   - Pin a folder from the file tree, reopen it from the Pinned section, and
+     unpin it.
+   - Open multiple folders, reopen them from File > Recent Folders, then use
+     Clear Recent Folders and confirm pinned folders remain.
    - Resize and reposition the window, quit, and reopen to confirm window state is restored.
    - Use document search with `Cmd+F` on macOS or `Ctrl+F` on Windows/Linux.
    - Toggle edit mode and verify file changes are intentional.
@@ -48,6 +52,6 @@ Run this checklist before tagging, sharing, or packaging a new desktop build:
 On macOS, `npm run tauri -- build` writes the local app bundle and DMG here:
 
 - `src-tauri/target/release/bundle/macos/PreviewerMD.app`
-- `src-tauri/target/release/bundle/dmg/PreviewerMD_0.4.1_aarch64.dmg`
+- `src-tauri/target/release/bundle/dmg/PreviewerMD_0.4.3_aarch64.dmg`
 
 The first macOS terminal hand-off may ask for Automation permission because PreviewerMD asks Terminal to open directly in the selected folder.

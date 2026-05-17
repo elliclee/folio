@@ -13,6 +13,8 @@ and night-time use. This README focuses on the desktop app.
 
 ![PreviewerMD split editor and preview mode](docs/screenshots/previewermd-split-view.jpg)
 
+![PreviewerMD pinned workspaces and recent folder menu support](docs/screenshots/previewermd-workspaces.jpg)
+
 ### Theme Gallery
 
 PreviewerMD includes several reading-oriented themes, from calm light modes to
@@ -41,6 +43,8 @@ current release target.
 ## Features
 
 - Open individual Markdown files or browse a folder of Markdown documents.
+- Pin frequently used workspace folders in the sidebar and reopen recent
+  folders from the native File menu.
 - Render GitHub Flavored Markdown with syntax-highlighted code blocks.
 - Switch between preview and split editor/preview modes.
 - Save intentional edits back to disk.
@@ -109,6 +113,10 @@ cargo test --manifest-path src-tauri/Cargo.toml
 Then smoke-test a packaged app:
 
 - Open a Markdown file and a folder.
+- Pin a folder from the file tree, open it from the Pinned section, then unpin
+  it.
+- Open multiple folders and confirm `File > Recent Folders` can reopen them and
+  `Clear Recent Folders` clears the menu without removing pinned folders.
 - Resize and reposition the window, quit, and reopen.
 - Use document search with `Cmd+F` on macOS or `Ctrl+F` on Windows/Linux.
 - Toggle edit mode and confirm saves are intentional.

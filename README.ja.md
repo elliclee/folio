@@ -13,6 +13,8 @@ PreviewerMD は、React、TypeScript、Vite、Tauri で構築されたローカ�
 
 ![PreviewerMD のエディター/プレビュー分割表示](docs/screenshots/previewermd-split-view.jpg)
 
+![PreviewerMD のピン留めワークスペースと最近使ったフォルダーメニュー](docs/screenshots/previewermd-workspaces.jpg)
+
 ### テーマギャラリー
 
 PreviewerMD には、読みやすさを重視した複数のテーマが用意されています。落ち着いた
@@ -41,6 +43,8 @@ PreviewerMD はローカル開発とパッケージングに利用できます�
 ## 機能
 
 - 単体の Markdown ファイル、または Markdown ドキュメントを含むフォルダーを開く。
+- よく使うワークスペースフォルダーをサイドバーにピン留めし、ネイティブの File
+  メニューから最近使ったフォルダーを開き直す。
 - GitHub Flavored Markdown をレンダリングし、コードブロックのシンタックスハイライトに対応。
 - フルプレビュー表示とエディター/プレビュー分割表示を切り替える。
 - 意図した編集内容をディスクへ保存する。
@@ -109,6 +113,10 @@ cargo test --manifest-path src-tauri/Cargo.toml
 その後、パッケージ化したアプリを手動で smoke test します。
 
 - Markdown ファイルとフォルダーを開く。
+- ファイルツリーからフォルダーをピン留めし、Pinned セクションから開き直してから
+  ピン留めを解除する。
+- 複数のフォルダーを開き、`File > Recent Folders` から開き直せることと、
+  `Clear Recent Folders` がピン留めフォルダーを残したまま最近使った一覧を消すことを確認する。
 - ウィンドウのサイズと位置を変更し、終了後に再度開く。
 - macOS では `Cmd+F`、Windows/Linux では `Ctrl+F` でドキュメント内検索を使う。
 - 編集モードを切り替え、保存操作が意図通りであることを確認する。

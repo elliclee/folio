@@ -10,7 +10,7 @@ use std::{
 };
 
 use tauri::{
-    menu::{AboutMetadata, Menu, MenuItem, PredefinedMenuItem, Submenu},
+    menu::{AboutMetadata, IsMenuItem, Menu, MenuItem, PredefinedMenuItem, Submenu},
     AppHandle, Emitter, Manager, PhysicalPosition, PhysicalSize, RunEvent, State, WebviewUrl,
     WebviewWindow, WindowEvent,
 };
@@ -19,7 +19,12 @@ use tauri_plugin_dialog::{DialogExt, FilePath};
 const MAIN_WINDOW_LABEL: &str = "main";
 const OPEN_MARKDOWN_EVENT: &str = "open-markdown-files";
 const FIND_IN_DOCUMENT_EVENT: &str = "find-in-document";
+const OPEN_RECENT_FOLDER_EVENT: &str = "open-recent-folder";
+const CLEAR_RECENT_FOLDERS_EVENT: &str = "clear-recent-folders";
 const OPEN_FOLDER_IN_NEW_WINDOW_MENU_ID: &str = "file.open-folder-new-window";
+const RECENT_FOLDER_MENU_ID_PREFIX: &str = "file.open-recent-folder.";
+const CLEAR_RECENT_FOLDERS_MENU_ID: &str = "file.clear-recent-folders";
+const NO_RECENT_FOLDERS_MENU_ID: &str = "file.no-recent-folders";
 const FIND_IN_DOCUMENT_MENU_ID: &str = "edit.find-in-document";
 const DEFAULT_THEME: &str = "light";
 const WINDOW_STATE_FILE_NAME: &str = "window-state.json";
@@ -45,6 +50,21 @@ struct PerformanceProbeConfig {
     enabled: bool,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq, serde::Deserialize, serde::Serialize)]
+struct WorkspaceFolder {
+    name: String,
+    path: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+struct DirectoryEntryPayload {
+    name: String,
+    path: String,
+    is_file: bool,
+    is_directory: bool,
+}
+
 #[derive(serde::Serialize)]
 struct PerformanceMetricPayload<'a> {
     name: &'a str,
@@ -67,6 +87,9 @@ struct WindowThemes(Mutex<HashMap<String, String>>);
 
 #[derive(Default)]
 struct WorkspaceWindowCounter(AtomicU64);
+
+#[derive(Default)]
+struct RecentWorkspaceFolders(Mutex<Vec<WorkspaceFolder>>);
 
 fn is_supported_markdown_path(path: &Path) -> bool {
     path.extension()
@@ -234,6 +257,54 @@ fn queue_pending_open_paths(
 
 fn pending_open_window_label(target_window_label: Option<&str>) -> &str {
     target_window_label.unwrap_or(MAIN_WINDOW_LABEL)
+}
+
+fn recent_folder_menu_id(index: usize) -> String {
+    format!("{RECENT_FOLDER_MENU_ID_PREFIX}{index}")
+}
+
+fn recent_folder_index_from_menu_id(menu_id: &str) -> Option<usize> {
+    menu_id
+        .strip_prefix(RECENT_FOLDER_MENU_ID_PREFIX)
+        .and_then(|index| index.parse::<usize>().ok())
+}
+
+fn workspace_folder_name(path: &str) -> String {
+    Path::new(path)
+        .file_name()
+        .and_then(|name| name.to_str())
+        .filter(|name| !name.is_empty())
+        .map(ToOwned::to_owned)
+        .unwrap_or_else(|| path.trim_end_matches(['/', '\\']).to_string())
+}
+
+fn normalize_workspace_folder(folder: WorkspaceFolder) -> Option<WorkspaceFolder> {
+    let path = folder.path.trim();
+    if path.is_empty() {
+        return None;
+    }
+
+    let name = if folder.name.trim().is_empty() {
+        workspace_folder_name(path)
+    } else {
+        folder.name
+    };
+
+    Some(WorkspaceFolder {
+        name,
+        path: path.to_string(),
+    })
+}
+
+fn get_recent_workspace_folder(
+    state: &RecentWorkspaceFolders,
+    index: usize,
+) -> Option<WorkspaceFolder> {
+    state
+        .0
+        .lock()
+        .ok()
+        .and_then(|folders| folders.get(index).cloned())
 }
 
 fn window_state_is_visible(state: &StoredWindowState, monitors: &[MonitorBounds]) -> bool {
@@ -476,6 +547,68 @@ fn file_path_to_string(path: FilePath) -> Option<String> {
         .map(|path| path.to_string_lossy().into_owned())
 }
 
+fn build_recent_folders_submenu<R: tauri::Runtime>(
+    app_handle: &AppHandle<R>,
+) -> tauri::Result<Submenu<R>> {
+    let folders = app_handle
+        .try_state::<RecentWorkspaceFolders>()
+        .and_then(|state| state.0.lock().ok().map(|folders| folders.clone()))
+        .unwrap_or_default();
+
+    if folders.is_empty() {
+        let no_recent_folders = MenuItem::with_id(
+            app_handle,
+            NO_RECENT_FOLDERS_MENU_ID,
+            "No Recent Folders",
+            false,
+            None::<&str>,
+        )?;
+
+        return Submenu::with_items(
+            app_handle,
+            "Recent Folders",
+            true,
+            &[&no_recent_folders],
+        );
+    }
+
+    let recent_folder_items = folders
+        .iter()
+        .enumerate()
+        .map(|(index, folder)| {
+            MenuItem::with_id(
+                app_handle,
+                recent_folder_menu_id(index),
+                &folder.name,
+                true,
+                None::<&str>,
+            )
+        })
+        .collect::<tauri::Result<Vec<_>>>()?;
+    let recent_folder_item_refs = recent_folder_items
+        .iter()
+        .map(|item| item as &dyn IsMenuItem<R>)
+        .collect::<Vec<_>>();
+    let separator = PredefinedMenuItem::separator(app_handle)?;
+    let clear_recent_folders = MenuItem::with_id(
+        app_handle,
+        CLEAR_RECENT_FOLDERS_MENU_ID,
+        "Clear Recent Folders",
+        true,
+        None::<&str>,
+    )?;
+    let mut recent_folder_items_with_clear = recent_folder_item_refs;
+    recent_folder_items_with_clear.push(&separator);
+    recent_folder_items_with_clear.push(&clear_recent_folders);
+
+    Submenu::with_items(
+        app_handle,
+        "Recent Folders",
+        true,
+        &recent_folder_items_with_clear,
+    )
+}
+
 fn build_app_menu<R: tauri::Runtime>(app_handle: &AppHandle<R>) -> tauri::Result<Menu<R>> {
     let package_info = app_handle.package_info();
     let config = app_handle.config();
@@ -498,6 +631,7 @@ fn build_app_menu<R: tauri::Runtime>(app_handle: &AppHandle<R>) -> tauri::Result
         true,
         Some("CmdOrCtrl+Shift+O"),
     )?;
+    let recent_folders = build_recent_folders_submenu(app_handle)?;
     let find_in_document = MenuItem::with_id(
         app_handle,
         FIND_IN_DOCUMENT_MENU_ID,
@@ -555,6 +689,8 @@ fn build_app_menu<R: tauri::Runtime>(app_handle: &AppHandle<R>) -> tauri::Result
                 &[
                     &open_folder_in_new_window,
                     &PredefinedMenuItem::separator(app_handle)?,
+                    &recent_folders,
+                    &PredefinedMenuItem::separator(app_handle)?,
                     &PredefinedMenuItem::close_window(app_handle, None)?,
                     #[cfg(not(target_os = "macos"))]
                     &PredefinedMenuItem::quit(app_handle, None)?,
@@ -592,6 +728,24 @@ fn build_app_menu<R: tauri::Runtime>(app_handle: &AppHandle<R>) -> tauri::Result
 #[tauri::command]
 fn read_markdown_file(path: String) -> Result<String, String> {
     std::fs::read_to_string(path).map_err(|err| err.to_string())
+}
+
+#[tauri::command]
+fn read_directory(path: String) -> Result<Vec<DirectoryEntryPayload>, String> {
+    let mut entries = Vec::new();
+
+    for entry in std::fs::read_dir(path).map_err(|err| err.to_string())? {
+        let entry = entry.map_err(|err| err.to_string())?;
+        let file_type = entry.file_type().map_err(|err| err.to_string())?;
+        entries.push(DirectoryEntryPayload {
+            name: entry.file_name().to_string_lossy().into_owned(),
+            path: entry.path().to_string_lossy().into_owned(),
+            is_file: file_type.is_file(),
+            is_directory: file_type.is_dir(),
+        });
+    }
+
+    Ok(entries)
 }
 
 #[tauri::command]
@@ -634,6 +788,39 @@ fn set_window_theme(
 }
 
 #[tauri::command]
+fn set_recent_workspace_folders(
+    app: AppHandle,
+    state: State<'_, RecentWorkspaceFolders>,
+    folders: Vec<WorkspaceFolder>,
+) -> Result<(), String> {
+    let mut normalized_folders = Vec::new();
+
+    for folder in folders {
+        let Some(folder) = normalize_workspace_folder(folder) else {
+            continue;
+        };
+
+        if normalized_folders
+            .iter()
+            .any(|existing: &WorkspaceFolder| existing.path == folder.path)
+        {
+            continue;
+        }
+
+        normalized_folders.push(folder);
+    }
+
+    {
+        let mut recent_folders = state.0.lock().map_err(|err| err.to_string())?;
+        *recent_folders = normalized_folders;
+    }
+
+    app.set_menu(build_app_menu(&app).map_err(|err| err.to_string())?)
+        .map(|_| ())
+        .map_err(|err| err.to_string())
+}
+
+#[tauri::command]
 fn get_performance_probe_config() -> PerformanceProbeConfig {
     current_performance_probe_config()
 }
@@ -663,6 +850,7 @@ pub fn run() {
         .manage(PendingOpenFiles::default())
         .manage(WindowThemes::default())
         .manage(WorkspaceWindowCounter::default())
+        .manage(RecentWorkspaceFolders::default())
         .menu(build_app_menu)
         .on_menu_event(|app_handle, event| {
             if event.id().as_ref() == OPEN_FOLDER_IN_NEW_WINDOW_MENU_ID {
@@ -671,6 +859,23 @@ pub fn run() {
                 if let Some(window) = get_target_document_window(app_handle) {
                     let _ = window.emit(FIND_IN_DOCUMENT_EVENT, ());
                 }
+            } else if let Some(index) = recent_folder_index_from_menu_id(event.id().as_ref()) {
+                let recent_folder =
+                    get_recent_workspace_folder(&app_handle.state::<RecentWorkspaceFolders>(), index);
+
+                if let (Some(folder), Some(window)) =
+                    (recent_folder, get_target_document_window(app_handle))
+                {
+                    let _ = window.emit(OPEN_RECENT_FOLDER_EVENT, folder.path);
+                    let _ = window.show();
+                    let _ = window.set_focus();
+                }
+            } else if event.id().as_ref() == CLEAR_RECENT_FOLDERS_MENU_ID {
+                if let Some(window) = get_target_document_window(app_handle) {
+                    let _ = window.emit(CLEAR_RECENT_FOLDERS_EVENT, ());
+                    let _ = window.show();
+                    let _ = window.set_focus();
+                }
             }
         })
         .plugin(tauri_plugin_dialog::init())
@@ -678,12 +883,14 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             print_current_window,
+            read_directory,
             read_markdown_file,
             write_markdown_file,
             take_pending_open_files,
             open_folder_in_new_window,
             open_folder_in_terminal,
             set_window_theme,
+            set_recent_workspace_folders,
             get_performance_probe_config,
             record_performance_metric
         ])
@@ -768,6 +975,23 @@ mod tests {
     #[test]
     fn pending_open_paths_fall_back_to_main_window_when_no_target_exists() {
         assert_eq!(pending_open_window_label(None), MAIN_WINDOW_LABEL);
+    }
+
+    #[test]
+    fn recent_folder_menu_ids_round_trip_indices() {
+        let menu_id = recent_folder_menu_id(3);
+
+        assert_eq!(menu_id, "file.open-recent-folder.3");
+        assert_eq!(recent_folder_index_from_menu_id(&menu_id), Some(3));
+        assert_eq!(recent_folder_index_from_menu_id("file.open-recent-folder.x"), None);
+        assert_eq!(recent_folder_index_from_menu_id(CLEAR_RECENT_FOLDERS_MENU_ID), None);
+        assert_eq!(recent_folder_index_from_menu_id("file.open-folder-new-window"), None);
+    }
+
+    #[test]
+    fn workspace_folder_name_uses_last_path_component() {
+        assert_eq!(workspace_folder_name("/Users/ellic/Project Notes"), "Project Notes");
+        assert_eq!(workspace_folder_name("/tmp/docs/"), "docs");
     }
 
     #[test]

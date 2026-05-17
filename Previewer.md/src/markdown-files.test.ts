@@ -5,6 +5,7 @@ import {
   collectMarkdownTree,
   getExpandedDirectoryPaths,
   getFirstMarkdownFile,
+  wrapMarkdownTreeInRootDirectory,
   type DirectoryEntryLike,
   type MarkdownTreeNode,
 } from './markdown-files';
@@ -165,4 +166,30 @@ test('getFirstMarkdownFile returns the first leaf in tree order', () => {
     name: 'alpha.md',
     path: '/tmp/notes/guides/alpha.md',
   });
+});
+
+test('wrapMarkdownTreeInRootDirectory displays the opened folder as the tree root', () => {
+  const tree: MarkdownTreeNode[] = [
+    { type: 'file', name: 'README.md', path: '/Users/ellic/papers/README.md' },
+  ];
+
+  assert.deepEqual(wrapMarkdownTreeInRootDirectory('/Users/ellic/papers', tree), [
+    {
+      type: 'directory',
+      name: 'papers',
+      path: '/Users/ellic/papers',
+      children: tree,
+    },
+  ] satisfies MarkdownTreeNode[]);
+});
+
+test('wrapMarkdownTreeInRootDirectory uses the folder path when no leaf name exists', () => {
+  assert.deepEqual(wrapMarkdownTreeInRootDirectory('/', []), [
+    {
+      type: 'directory',
+      name: '/',
+      path: '/',
+      children: [],
+    },
+  ] satisfies MarkdownTreeNode[]);
 });

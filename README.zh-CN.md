@@ -12,6 +12,8 @@ TypeScript、Vite 和 Tauri 构建。它重点优化长文阅读体验，提供�
 
 ![PreviewerMD 分栏编辑与预览模式](docs/screenshots/previewermd-split-view.jpg)
 
+![PreviewerMD 固定工作区和最近文件夹菜单](docs/screenshots/previewermd-workspaces.jpg)
+
 ### 主题展示
 
 PreviewerMD 内置多套面向阅读的主题，从清爽浅色、柔和编辑风，到夜间深色和
@@ -39,6 +41,7 @@ PreviewerMD 已可用于本地开发和打包。当前发布目标是桌面版�
 ## 功能
 
 - 打开单个 Markdown 文件，或浏览包含 Markdown 文档的文件夹。
+- 将常用工作区文件夹固定到侧栏，并从原生 File 菜单重新打开最近使用的文件夹。
 - 渲染 GitHub Flavored Markdown，并支持代码块语法高亮。
 - 在完整预览和编辑/预览分栏模式之间切换。
 - 将确认后的编辑保存回磁盘。
@@ -104,6 +107,9 @@ cargo test --manifest-path src-tauri/Cargo.toml
 随后对打包后的应用做手动 smoke test：
 
 - 打开一个 Markdown 文件和一个文件夹。
+- 从文件树固定一个文件夹，通过 Pinned 区域重新打开，然后取消固定。
+- 打开多个文件夹，确认 `File > Recent Folders` 可以重新打开它们，并确认
+  `Clear Recent Folders` 会清空最近列表但不会删除固定文件夹。
 - 调整窗口大小和位置，退出后重新打开。
 - 在 macOS 使用 `Cmd+F`，在 Windows/Linux 使用 `Ctrl+F` 搜索文档。
 - 切换编辑模式，并确认保存行为符合预期。
