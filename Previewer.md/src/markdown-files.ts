@@ -110,6 +110,23 @@ export function getExpandedDirectoryPaths(tree: MarkdownTreeNode[]): string[] {
   });
 }
 
+export function getDefaultExpandedDirectoryPaths(
+  tree: MarkdownTreeNode[],
+  maxVisibleDepth = 3,
+  currentDepth = 1,
+): string[] {
+  return tree.flatMap((node) => {
+    if (node.type !== 'directory' || currentDepth >= maxVisibleDepth) {
+      return [];
+    }
+
+    return [
+      node.path,
+      ...getDefaultExpandedDirectoryPaths(node.children, maxVisibleDepth, currentDepth + 1),
+    ];
+  });
+}
+
 export function getFirstMarkdownFile(tree: MarkdownTreeNode[]): MarkdownFileItem | null {
   for (const node of tree) {
     if (node.type === 'file') {

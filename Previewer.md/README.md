@@ -52,6 +52,6 @@ Run this checklist before tagging, sharing, or packaging a new desktop build:
 On macOS, `npm run tauri -- build` writes the local app bundle and DMG here:
 
 - `src-tauri/target/release/bundle/macos/PreviewerMD.app`
-- `src-tauri/target/release/bundle/dmg/PreviewerMD_0.4.4_aarch64.dmg`
+- `src-tauri/target/release/bundle/dmg/PreviewerMD_0.4.5_aarch64.dmg`
 
 The first macOS terminal hand-off may ask for Automation permission because PreviewerMD asks Terminal to open directly in the selected folder.

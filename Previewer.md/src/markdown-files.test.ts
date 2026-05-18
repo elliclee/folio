@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 
 import {
   collectMarkdownTree,
+  getDefaultExpandedDirectoryPaths,
   getExpandedDirectoryPaths,
   getFirstMarkdownFile,
   wrapMarkdownTreeInRootDirectory,
@@ -145,6 +146,44 @@ test('getExpandedDirectoryPaths returns every directory path in the tree', () =>
   assert.deepEqual(getExpandedDirectoryPaths(tree), [
     '/tmp/notes/guides',
     '/tmp/notes/guides/advanced',
+  ]);
+});
+
+test('getDefaultExpandedDirectoryPaths expands only folders above the third visible level', () => {
+  const tree: MarkdownTreeNode[] = [
+    {
+      type: 'directory',
+      name: 'workspace',
+      path: '/tmp/workspace',
+      children: [
+        {
+          type: 'directory',
+          name: 'output',
+          path: '/tmp/workspace/output',
+          children: [
+            {
+              type: 'directory',
+              name: 'annotated',
+              path: '/tmp/workspace/output/annotated',
+              children: [
+                {
+                  type: 'directory',
+                  name: 'deep',
+                  path: '/tmp/workspace/output/annotated/deep',
+                  children: [{ type: 'file', name: 'note.md', path: '/tmp/workspace/output/annotated/deep/note.md' }],
+                },
+              ],
+            },
+            { type: 'file', name: 'README.md', path: '/tmp/workspace/output/README.md' },
+          ],
+        },
+      ],
+    },
+  ];
+
+  assert.deepEqual(getDefaultExpandedDirectoryPaths(tree), [
+    '/tmp/workspace',
+    '/tmp/workspace/output',
   ]);
 });
 

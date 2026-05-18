@@ -13,7 +13,7 @@ import { dirname, homeDir, join } from '@tauri-apps/api/path';
 import { hasUnsavedChanges, shouldConfirmBeforeReplacingFile } from './editor-state';
 import {
   collectMarkdownTree,
-  getExpandedDirectoryPaths,
+  getDefaultExpandedDirectoryPaths,
   getFirstMarkdownFile,
   wrapMarkdownTreeInRootDirectory,
   type MarkdownFileItem,
@@ -371,7 +371,7 @@ export default function App() {
 
       if (markdownTree.length > 0) {
         setTree(markdownTree);
-        setExpandedDirectories(new Set(getExpandedDirectoryPaths(markdownTree)));
+        setExpandedDirectories(new Set(getDefaultExpandedDirectoryPaths(markdownTree)));
       }
 
       return matchedFile ?? createStandaloneMarkdownFile(filePath);
@@ -481,7 +481,7 @@ export default function App() {
       setCurrentFolderPath(selectedPath);
       rememberWorkspaceFolder(selectedPath);
       setTree(workspaceTree);
-      setExpandedDirectories(new Set(getExpandedDirectoryPaths(workspaceTree)));
+      setExpandedDirectories(new Set(getDefaultExpandedDirectoryPaths(workspaceTree)));
 
       const firstFile = getFirstMarkdownFile(markdownTree);
       if (firstFile) {
