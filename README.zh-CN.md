@@ -1,133 +1,103 @@
-# PreviewerMD
+# Folio
 
 [English](README.md) | [简体中文](README.zh-CN.md) | [日本語](README.ja.md)
 
-PreviewerMD 是一个本地优先的 Markdown 阅读器和轻量编辑器，基于 React、
-TypeScript、Vite 和 Tauri 构建。它重点优化长文阅读体验，提供多套适合
-不同写作风格、光线环境和夜间使用的视觉主题。本文档聚焦桌面版应用。
+Folio 是一款本地优先的原生 macOS Markdown 阅读器与轻量编辑器。它完全用
+SwiftUI 构建，不使用 WebView 渲染：由
+[swift-markdown](https://github.com/apple/swift-markdown) 解析 GitHub Flavored
+Markdown，渲染器直接输出原生 SwiftUI 视图与 `AttributedString`。它专注于
+舒适的长文阅读，并提供多套适配不同写作风格与光照环境的视觉主题。
 
-## 截图
+Folio 是当前主力应用，仅支持 macOS。最初的跨平台实现（一个名为
+**PreviewerMD** 的 React + Tauri 应用）仍保留在本仓库的
+[`Previewer.md/`](#历史版本previewermdtauri) 目录中。
 
-![PreviewerMD 预览模式](docs/screenshots/previewermd-preview.jpg)
+## 功能
 
-![PreviewerMD 分栏编辑与预览模式](docs/screenshots/previewermd-split-view.jpg)
+- 打开单个 Markdown 文件，或浏览整个 Markdown 文件夹。
+- 原生侧栏文件树，支持置顶（Pinned）与最近（Recent）工作区文件夹。
+- 渲染 GitHub Flavored Markdown：标题、列表、任务列表、表格、引用、删除线、
+  链接、围栏代码块。
+- 代码块原生语法高亮（约 30 种语言，不依赖 highlight.js）。
+- 在「预览」与「分栏编辑/预览」之间切换；编辑结果保存到磁盘。
+- 文档内查找（⌘F），高亮匹配并循环跳转。
+- 通过原生打印管线打印或导出 PDF（⌘P）。
+- 多个工作区窗口，每个窗口拥有独立的文档与主题。
+- 从访达直接打开 `.md`/`.markdown` 文件（文件关联）。
+- 多套阅读主题——Vercel（默认）、Claude、Claude Dark、Lovable、Spotify、
+  Dark、High Contrast。暖色编辑向主题的标题使用衬线字体。
+- 窗口位置与大小在重启后自动恢复。
 
-![PreviewerMD 固定工作区和最近文件夹菜单](docs/screenshots/previewermd-workspaces.jpg)
+## 环境要求
 
-### 主题展示
+- macOS 15 或更高版本
+- Swift 6 工具链（Xcode 16 或对应的命令行工具）
 
-PreviewerMD 内置多套面向阅读的主题，从清爽浅色、柔和编辑风，到夜间深色和
-高对比风格都可以覆盖。主题可以从顶部工具栏切换，并会作用于整个阅读界面，
-不只是正文区域。
+## 构建与运行
 
-![PreviewerMD Claude Dark 主题](docs/screenshots/previewermd-theme-claude-dark.jpg)
+```bash
+cd Folio
+swift build          # 编译
+swift test           # 运行测试
+swift run            # 以欢迎文档启动
+```
 
-![PreviewerMD Lovable 主题](docs/screenshots/previewermd-theme-lovable.jpg)
+打包为可分发的 app（含图标与文件关联，ad-hoc 签名）：
 
-![PreviewerMD Spotify 主题](docs/screenshots/previewermd-theme-spotify.jpg)
+```bash
+cd Folio
+./scripts/bundle.sh        # → dist/Folio.app
+./scripts/bundle.sh --dmg  # → 同时生成 dist/Folio.dmg
+```
 
-## 项目状态
+安装：`cp -R dist/Folio.app /Applications/`。
 
-PreviewerMD 已可用于本地开发和打包。当前发布目标是桌面版应用。
+开发便捷开关（无需打包，直接跑可执行文件）：
+
+```bash
+FOLIO_OPEN=~/notes swift run            # 启动时打开文件夹/文件
+FOLIO_THEME=claude swift run            # 预设阅读主题
+FOLIO_EXPORT_PDF=/tmp/doc.pdf swift run # 无界面打印渲染为 PDF
+```
 
 ## 仓库结构
 
 | 路径 | 用途 |
 | --- | --- |
-| `Previewer.md/` | 面向 macOS、Windows 和 Linux 的 Tauri 桌面应用。 |
-| `src/` | 早期浏览器版 Markdown previewer 原型。 |
-| `docs/` | 规划说明和实现记录。 |
+| `Folio/` | 原生 macOS SwiftUI 应用（当前主力）。 |
+| `Previewer.md/` | 最初的 React + Tauri 应用 **PreviewerMD**（跨平台）。 |
+| `src/` | 早期的纯浏览器 Markdown 预览原型。 |
+| `docs/` | 规划笔记与实现记录。 |
 
-## 功能
+`Folio/` 内的 Swift 模块在行为上与 Tauri 版的 TypeScript 模块一一对应
+（各自带测试）；逐文件对照表与里程碑记录见
+[`Folio/README.md`](Folio/README.md)。
 
-- 打开单个 Markdown 文件，或浏览包含 Markdown 文档的文件夹。
-- 将常用工作区文件夹固定到侧栏，并从原生 File 菜单重新打开最近使用的文件夹。
-- 渲染 GitHub Flavored Markdown，并支持代码块语法高亮。
-- 在完整预览和编辑/预览分栏模式之间切换。
-- 将确认后的编辑保存回磁盘。
-- 在当前文档内搜索。
-- 打印或导出渲染后的 Markdown。
-- 从多套阅读主题中选择，包括浅色、深色、编辑风和高对比风格，适应不同使用环境。
-- 保留接近原生桌面应用的窗口行为和主题选择。
-- 在系统终端中打开当前文件夹。
+## 历史版本：PreviewerMD（Tauri）
 
-## 环境要求
-
-- Node.js 20 或更新版本
-- npm 10 或更新版本
-- Rust stable toolchain
-- 当前操作系统对应的 Tauri 2 平台依赖
-
-运行桌面应用前，请先按官方 Tauri prerequisites 完成对应系统的环境配置。
-
-## 桌面版开发
+跨平台的 React + TypeScript + Vite + Tauri 应用仍可在 macOS、Windows、Linux
+上使用。
 
 ```bash
 cd Previewer.md
 npm install
-npm run tauri -- dev
+npm run tauri -- dev     # 开发
+npm run tauri -- build   # 打包
 ```
 
-常用命令：
-
-```bash
-npm test
-npm run build
-npm run perf:gate
-cargo test --manifest-path src-tauri/Cargo.toml
-npm run tauri -- build
-```
-
-渲染进程应用代码位于 `Previewer.md/src/`。Tauri 配置和原生命令位于
+渲染层代码位于 `Previewer.md/src/`；原生命令与 Tauri 配置位于
 `Previewer.md/src-tauri/`。
-
-## 旧版 Web 原型
-
-仓库根目录保留了一个早期浏览器版 previewer。它仍可通过以下命令运行：
-
-```bash
-npm install
-npm run dev
-```
-
-该原型与正式的 Tauri 桌面应用相互独立。
-
-## 发布前验证
-
-发布或打 tag 前，建议先运行桌面版检查：
-
-```bash
-cd Previewer.md
-npm test
-npm run build
-npm run perf:gate
-cargo test --manifest-path src-tauri/Cargo.toml
-```
-
-随后对打包后的应用做手动 smoke test：
-
-- 打开一个 Markdown 文件和一个文件夹。
-- 从文件树固定一个文件夹，通过 Pinned 区域重新打开，然后取消固定。
-- 打开多个文件夹，确认 `File > Recent Folders` 可以重新打开它们，并确认
-  `Clear Recent Folders` 会清空最近列表但不会删除固定文件夹。
-- 调整窗口大小和位置，退出后重新打开。
-- 在 macOS 使用 `Cmd+F`，在 Windows/Linux 使用 `Ctrl+F` 搜索文档。
-- 切换编辑模式，并确认保存行为符合预期。
-- 打印或导出当前文档。
-- 在系统终端中打开当前文件夹。
 
 ## 安全与隐私
 
-- PreviewerMD 是本地优先应用，只处理用户主动选择的文件。
-- 不要提交真实 `.env` 文件、签名证书、provisioning profile、生成的归档包或平台构建产物。
-- `.env.example` 只包含占位值。
-- 公开发布前，请轮换任何曾在本地实验中使用过的签名材料。
+- Folio 本地优先，只处理用户选择的文件。
+- 不要提交签名证书、描述文件、生成的归档或平台相关的构建产物。
 
 ## 贡献
 
-欢迎提交 issue 和 pull request。提交代码改动时，请在可行范围内补充聚焦的测试，
-并在开启 pull request 前运行相关验证命令。
+欢迎提交 Issue 与 Pull Request。代码改动请尽量附带聚焦的测试，并在提 PR 前
+运行 `swift test`（Tauri 版另有自己的检查）。
 
 ## 许可证
 
-本项目使用 MIT License。详见 [LICENSE](LICENSE)。
+本项目采用 MIT 许可证，详见 [LICENSE](LICENSE)。
