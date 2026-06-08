@@ -13,6 +13,16 @@ Folio は現行アプリで、macOS 専用です。最初のクロスプラッ�
 （**PreviewerMD** という React + Tauri アプリ）は本リポジトリの
 [`Previewer.md/`](#旧バージョンpreviewermdtauri) に残っています。
 
+## スクリーンショット
+
+![Folio プレビューモード](docs/screenshots/folio-preview.png)
+
+![Folio 分割エディタとプレビュー](docs/screenshots/folio-split.png)
+
+| Claude Dark テーマ | ドキュメント内検索 |
+| --- | --- |
+| ![Claude Dark テーマ](docs/screenshots/folio-dark.png) | ![ドキュメント内検索](docs/screenshots/folio-find.png) |
+
 ## 機能
 
 - 個別の Markdown ファイルを開く、またはフォルダ単位で閲覧。

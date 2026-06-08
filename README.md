@@ -13,6 +13,16 @@ Folio is the current app and is macOS-only. The original cross-platform
 implementation (a React + Tauri app named **PreviewerMD**) still lives in this
 repository under [`Previewer.md/`](#previous-version-previewermd-tauri).
 
+## Screenshots
+
+![Folio preview mode](docs/screenshots/folio-preview.png)
+
+![Folio split editor and preview](docs/screenshots/folio-split.png)
+
+| Claude Dark theme | Find in document |
+| --- | --- |
+| ![Claude Dark theme](docs/screenshots/folio-dark.png) | ![Find in document](docs/screenshots/folio-find.png) |
+
 ## Features
 
 - Open individual Markdown files or browse a folder of Markdown documents.

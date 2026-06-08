@@ -12,6 +12,16 @@ Folio 是当前主力应用，仅支持 macOS。最初的跨平台实现（一�
 **PreviewerMD** 的 React + Tauri 应用）仍保留在本仓库的
 [`Previewer.md/`](#历史版本previewermdtauri) 目录中。
 
+## 截图
+
+![Folio 预览模式](docs/screenshots/folio-preview.png)
+
+![Folio 分栏编辑与预览](docs/screenshots/folio-split.png)
+
+| Claude Dark 主题 | 文档内查找 |
+| --- | --- |
+| ![Claude Dark 主题](docs/screenshots/folio-dark.png) | ![文档内查找](docs/screenshots/folio-find.png) |
+
 ## 功能
 
 - 打开单个 Markdown 文件，或浏览整个 Markdown 文件夹。
