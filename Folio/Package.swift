@@ -5,7 +5,10 @@ let package = Package(
     name: "Folio",
     platforms: [
         // macOS 15 for ScrollPosition/onScrollGeometryChange (scroll sync).
+        // iOS 17 for @Observable; FolioCore builds for iOS, the Folio
+        // executable (AppKit) stays macOS-only.
         .macOS(.v15),
+        .iOS(.v17),
     ],
     products: [
         // Portable core (rendering, themes, highlighting, tree, find,
