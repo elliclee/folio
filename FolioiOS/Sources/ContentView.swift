@@ -13,10 +13,23 @@ struct ContentView: View {
         }
     }
 
+    // Union of broad text types AND extension-derived types: on devices
+    // with no app declaring the markdown UTI, .md gets a dynamic type that
+    // doesn't conform to public.text, so the by-extension types are what
+    // actually keep .md selectable. A file is enabled if it matches any.
+    // The app now declares net.daringfireball.markdown (UTImportedType),
+    // so it resolves to a real type that conforms to public.plain-text —
+    // .md is reliably selectable. Plain text + html cover the rest.
     private var importedContentTypes: [UTType] {
-        var types: [UTType] = [.plainText, .html]
-        if let markdown = UTType(filenameExtension: "md") { types.append(markdown) }
-        if let markdownLong = UTType(filenameExtension: "markdown") { types.append(markdownLong) }
+        var types: [UTType] = [.plainText, .text, .html]
+        if let markdown = UTType("net.daringfireball.markdown") {
+            types.insert(markdown, at: 0)
+        }
+        for ext in ["md", "markdown", "mdown", "mkd", "htm"] {
+            if let type = UTType(filenameExtension: ext) {
+                types.append(type)
+            }
+        }
         return types
     }
 
@@ -99,13 +112,16 @@ struct ContentView: View {
         }
         .tint(palette.accent)
         .preferredColorScheme(viewModel.theme.colorScheme)
-        .fileImporter(
-            isPresented: $isImporting,
-            allowedContentTypes: importedContentTypes
-        ) { result in
-            if case .success(let url) = result {
+        .sheet(isPresented: $isImporting) {
+            DocumentPicker(contentTypes: importedContentTypes) { url in
                 viewModel.open(url: url)
             }
+            .ignoresSafeArea()
+        }
+        .alert("Couldn’t open file", isPresented: $viewModel.errorPresented) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(viewModel.errorMessage ?? "")
         }
     }
 }

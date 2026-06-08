@@ -42,29 +42,82 @@ final class ReaderViewModel {
         ).render(markdown)
     }
 
+    /// Surfaced to the user when a file can't be opened. `errorPresented`
+    /// drives the alert via a real @Observable property (a get-only
+    /// Binding closure isn't reliably tracked).
+    var errorMessage: String?
+    var errorPresented = false
+
     /// Opens a document the user picked or that another app handed us.
-    /// iOS hands back security-scoped URLs; we must bracket the read with
-    /// start/stop and persist a bookmark so recents can reopen it.
+    /// iOS hands back security-scoped URLs; bracket the read with
+    /// start/stop, try a coordinated read (Files/iCloud providers) and
+    /// fall back to a direct read, then persist a bookmark for recents.
     func open(url: URL) {
         let scoped = url.startAccessingSecurityScopedResource()
         defer { if scoped { url.stopAccessingSecurityScopedResource() } }
 
-        do {
-            let text = try String(contentsOf: url, encoding: .utf8)
-            fileName = url.lastPathComponent
-            switch DocumentKind.from(path: url.path) {
-            case .html:
-                htmlDocument = text
-                htmlBaseURL = url.deletingLastPathComponent()
-            case .markdown:
-                htmlDocument = nil
-                markdown = text
-            }
-            let bookmark = try? url.bookmarkData()
-            recents.remember(name: url.lastPathComponent, path: url.path, bookmark: bookmark)
-        } catch {
-            NSLog("Folio: failed to open %@: %@", url.path, error.localizedDescription)
+        var text: String?
+        var failure: String?
+
+        var coordinationError: NSError?
+        NSFileCoordinator().coordinate(readingItemAt: url, options: [], error: &coordinationError) { readURL in
+            text = readString(at: readURL)
         }
+        // Coordination can fail on some providers; try a direct read too.
+        if text == nil {
+            text = readString(at: url)
+            if text == nil {
+                failure = coordinationError?.localizedDescription
+                    ?? "Couldn’t read \(url.lastPathComponent)."
+            }
+        }
+
+        guard let text else {
+            errorMessage = "\(failure ?? "Unknown error")\n\nscoped=\(scoped)"
+            errorPresented = true
+            NSLog("Folio: failed to open %@: %@", url.path, failure ?? "unknown")
+            return
+        }
+
+        fileName = url.lastPathComponent
+        switch DocumentKind.from(path: url.path) {
+        case .html:
+            htmlDocument = text
+            htmlBaseURL = url.deletingLastPathComponent()
+        case .markdown:
+            htmlDocument = nil
+            markdown = text
+        }
+        // `asCopy` URLs are temporary; keep a durable copy in our own
+        // container so the history list can reopen it without any
+        // security-scoped access later.
+        let storedPath = persistCopy(name: url.lastPathComponent, text: text) ?? url.path
+        recents.remember(name: url.lastPathComponent, path: storedPath, bookmark: nil)
+    }
+
+    private func persistCopy(name: String, text: String) -> String? {
+        guard let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            return nil
+        }
+        let dir = docs.appendingPathComponent("FolioRecents", isDirectory: true)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        let dest = dir.appendingPathComponent(name)
+        do {
+            try text.write(to: dest, atomically: true, encoding: .utf8)
+            return dest.path
+        } catch {
+            return nil
+        }
+    }
+
+    private func readString(at url: URL) -> String? {
+        if let decoded = try? String(contentsOf: url, encoding: .utf8) {
+            return decoded
+        }
+        if let data = try? Data(contentsOf: url) {
+            return String(decoding: data, as: UTF8.self)
+        }
+        return nil
     }
 
     func openRecent(_ document: RecentDocument) {

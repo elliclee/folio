@@ -34,10 +34,32 @@ public struct HTMLWebView {
     private func makeWebView() -> WKWebView {
         let config = WKWebViewConfiguration()
         config.defaultWebpagePreferences.allowsContentJavaScript = true
+
+        // Force the page to fit the screen width and disable pinch-zoom /
+        // horizontal scrolling — a reader, not a browser.
+        let lockScript = """
+        (function () {
+            var v = document.querySelector('meta[name=viewport]');
+            if (!v) { v = document.createElement('meta'); v.name = 'viewport'; (document.head || document.documentElement).appendChild(v); }
+            v.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
+            var s = document.createElement('style');
+            s.textContent = 'html,body{max-width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%;}';
+            (document.head || document.documentElement).appendChild(s);
+        })();
+        """
+        let controller = WKUserContentController()
+        controller.addUserScript(WKUserScript(source: lockScript, injectionTime: .atDocumentEnd, forMainFrameOnly: true))
+        config.userContentController = controller
+
         let webView = WKWebView(frame: .zero, configuration: config)
         #if os(iOS)
         webView.isOpaque = false
         webView.scrollView.backgroundColor = .clear
+        // Lock zoom and suppress horizontal scrolling.
+        webView.scrollView.minimumZoomScale = 1
+        webView.scrollView.maximumZoomScale = 1
+        webView.scrollView.bouncesZoom = false
+        webView.scrollView.showsHorizontalScrollIndicator = false
         #endif
         return webView
     }
