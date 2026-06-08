@@ -6,6 +6,13 @@ struct ContentView: View {
     @Environment(ReaderViewModel.self) private var viewModel
     @State private var isImporting = false
 
+    private func documentIcon(_ name: String) -> String {
+        switch (name as NSString).pathExtension.lowercased() {
+        case "html", "htm": "globe"
+        default: "doc.text"
+        }
+    }
+
     private var importedContentTypes: [UTType] {
         var types: [UTType] = [.plainText, .html]
         if let markdown = UTType(filenameExtension: "md") { types.append(markdown) }
@@ -52,20 +59,36 @@ struct ContentView: View {
                         Image(systemName: "folder")
                     }
                 }
+                // Dedicated history menu: recently opened documents.
+                ToolbarItem(placement: .topBarLeading) {
+                    Menu {
+                        if viewModel.recents.documents.isEmpty {
+                            Text("No Recent Documents")
+                        } else {
+                            ForEach(viewModel.recents.documents) { document in
+                                Button {
+                                    viewModel.openRecent(document)
+                                } label: {
+                                    Label(document.name, systemImage: documentIcon(document.name))
+                                }
+                            }
+                            Divider()
+                            Button(role: .destructive) {
+                                viewModel.recents.clear()
+                            } label: {
+                                Label("Clear History", systemImage: "trash")
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "clock.arrow.circlepath")
+                    }
+                    .disabled(viewModel.recents.documents.isEmpty)
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Picker("Theme", selection: $viewModel.theme) {
                             ForEach(AppTheme.allCases) { theme in
                                 Text(theme.label).tag(theme)
-                            }
-                        }
-                        if !viewModel.recents.documents.isEmpty {
-                            Section("Recent") {
-                                ForEach(viewModel.recents.documents) { document in
-                                    Button(document.name) {
-                                        viewModel.openRecent(document)
-                                    }
-                                }
                             }
                         }
                     } label: {
