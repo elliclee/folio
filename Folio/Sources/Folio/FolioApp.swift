@@ -1,4 +1,5 @@
 import SwiftUI
+import FolioCore
 
 /// Per-window seed: which folder to open and which theme to inherit —
 /// the counterpart of the Tauri `?folder=…&theme=…` workspace-window URL.
@@ -86,6 +87,7 @@ struct AppCommands: Commands {
     @Environment(\.openWindow) private var openWindow
 
     private var workspaceFolders = WorkspaceFoldersStore.shared
+    private var recentDocuments = RecentDocumentsStore.shared
 
     var body: some Commands {
         CommandGroup(replacing: .newItem) {
@@ -146,6 +148,30 @@ struct AppCommands: Commands {
 
                     Button("Clear Recent Folders") {
                         workspaceFolders.clearRecent()
+                    }
+                }
+            }
+
+            // Recently opened documents (most-recent 3).
+            Menu("Open Recent") {
+                if recentDocuments.documents.isEmpty {
+                    Button("No Recent Documents") {}
+                        .disabled(true)
+                } else {
+                    ForEach(recentDocuments.documents) { document in
+                        Button(document.name) {
+                            if let viewModel {
+                                viewModel.openRecentDocument(document)
+                            } else {
+                                openWindow(value: WorkspaceSeed(folderPath: nil))
+                            }
+                        }
+                    }
+
+                    Divider()
+
+                    Button("Clear Recent Documents") {
+                        recentDocuments.clear()
                     }
                 }
             }

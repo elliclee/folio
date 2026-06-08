@@ -1,4 +1,5 @@
 import AppKit
+import FolioCore
 import Observation
 
 /// Routes Finder "open document" events (double-clicked .md files, drag

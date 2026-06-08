@@ -1,4 +1,5 @@
 import XCTest
+import FolioCore
 @testable import Folio
 
 final class FindMatchIndexTests: XCTestCase {

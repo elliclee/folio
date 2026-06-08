@@ -4,23 +4,29 @@ import Foundation
 /// scrollable-distance percentage, and whichever pane the user is
 /// actively scrolling owns the sync until it has been idle for 180ms
 /// (prevents feedback loops between the two panes).
-enum ScrollSyncPane {
+public enum ScrollSyncPane {
     case editor
     case preview
 }
 
-struct ScrollMetrics: Equatable {
-    var offset: CGFloat = 0
-    var contentHeight: CGFloat = 0
-    var viewportHeight: CGFloat = 0
+public struct ScrollMetrics: Equatable {
+    public var offset: CGFloat = 0
+    public var contentHeight: CGFloat = 0
+    public var viewportHeight: CGFloat = 0
 
-    var scrollableDistance: CGFloat {
+    public init(offset: CGFloat = 0, contentHeight: CGFloat = 0, viewportHeight: CGFloat = 0) {
+        self.offset = offset
+        self.contentHeight = contentHeight
+        self.viewportHeight = viewportHeight
+    }
+
+    public var scrollableDistance: CGFloat {
         max(0, contentHeight - viewportHeight)
     }
 }
 
 /// Mirrors `syncScrollPosition`: returns the target pane's offset.
-func syncedScrollOffset(source: ScrollMetrics, target: ScrollMetrics) -> CGFloat {
+public func syncedScrollOffset(source: ScrollMetrics, target: ScrollMetrics) -> CGFloat {
     let sourceDistance = source.scrollableDistance
     let targetDistance = target.scrollableDistance
 
@@ -33,14 +39,16 @@ func syncedScrollOffset(source: ScrollMetrics, target: ScrollMetrics) -> CGFloat
 
 /// Mirrors `createScrollSyncController`'s active-pane guard.
 @MainActor
-final class ScrollSyncController {
-    static let releaseDelay: TimeInterval = 0.18
+public final class ScrollSyncController {
+    public static let releaseDelay: TimeInterval = 0.18
 
     private var activePane: ScrollSyncPane?
     private var releaseTask: Task<Void, Never>?
 
+    public init() {}
+
     /// Returns true when `pane` is allowed to drive the other pane.
-    func beginScroll(from pane: ScrollSyncPane) -> Bool {
+    public func beginScroll(from pane: ScrollSyncPane) -> Bool {
         if let activePane, activePane != pane {
             return false
         }
@@ -57,7 +65,7 @@ final class ScrollSyncController {
         return true
     }
 
-    func reset() {
+    public func reset() {
         releaseTask?.cancel()
         releaseTask = nil
         activePane = nil
@@ -67,32 +75,34 @@ final class ScrollSyncController {
 /// Connects the two panes. Each pane registers a setter for programmatic
 /// scrolling and reports its scroll events here.
 @MainActor
-final class PaneScrollCoordinator {
+public final class PaneScrollCoordinator {
     private let controller = ScrollSyncController()
 
-    var editorMetrics = ScrollMetrics()
-    var previewMetrics = ScrollMetrics()
+    public var editorMetrics = ScrollMetrics()
+    public var previewMetrics = ScrollMetrics()
 
     /// Setters installed by the pane views (offset in points).
-    var scrollEditor: ((CGFloat) -> Void)?
-    var scrollPreview: ((CGFloat) -> Void)?
+    public var scrollEditor: ((CGFloat) -> Void)?
+    public var scrollPreview: ((CGFloat) -> Void)?
 
-    var isSyncEnabled = false
+    public var isSyncEnabled = false
 
-    func editorDidScroll(_ metrics: ScrollMetrics) {
+    public init() {}
+
+    public func editorDidScroll(_ metrics: ScrollMetrics) {
         editorMetrics = metrics
         guard isSyncEnabled, controller.beginScroll(from: .editor) else { return }
         scrollPreview?(syncedScrollOffset(source: metrics, target: previewMetrics))
     }
 
-    func previewDidScroll(_ metrics: ScrollMetrics) {
+    public func previewDidScroll(_ metrics: ScrollMetrics) {
         previewMetrics = metrics
         guard isSyncEnabled, controller.beginScroll(from: .preview) else { return }
         scrollEditor?(syncedScrollOffset(source: metrics, target: editorMetrics))
     }
 
     /// Mirrors `resetScrollPositions` when a new document loads.
-    func resetScrollPositions() {
+    public func resetScrollPositions() {
         controller.reset()
         scrollEditor?(0)
         scrollPreview?(0)

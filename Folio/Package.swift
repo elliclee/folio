@@ -7,13 +7,27 @@ let package = Package(
         // macOS 15 for ScrollPosition/onScrollGeometryChange (scroll sync).
         .macOS(.v15),
     ],
+    products: [
+        // Portable core (rendering, themes, highlighting, tree, find,
+        // scroll sync, workspace/recents) — reused by the future iOS app.
+        .library(name: "FolioCore", targets: ["FolioCore"]),
+    ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-markdown.git", from: "0.4.0"),
     ],
     targets: [
+        .target(
+            name: "FolioCore",
+            dependencies: [
+                .product(name: "Markdown", package: "swift-markdown"),
+            ],
+            path: "Sources/FolioCore",
+            swiftSettings: [.swiftLanguageMode(.v5)]
+        ),
         .executableTarget(
             name: "Folio",
             dependencies: [
+                "FolioCore",
                 .product(name: "Markdown", package: "swift-markdown"),
             ],
             path: "Sources/Folio",
@@ -21,7 +35,7 @@ let package = Package(
         ),
         .testTarget(
             name: "FolioTests",
-            dependencies: ["Folio"],
+            dependencies: ["Folio", "FolioCore"],
             path: "Tests/FolioTests",
             swiftSettings: [.swiftLanguageMode(.v5)]
         ),

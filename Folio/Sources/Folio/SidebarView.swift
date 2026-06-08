@@ -1,4 +1,5 @@
 import SwiftUI
+import FolioCore
 
 /// Native sidebar: `List(.sidebar)` inside a `NavigationSplitView`, with
 /// system material, native selection, disclosure triangles, and context

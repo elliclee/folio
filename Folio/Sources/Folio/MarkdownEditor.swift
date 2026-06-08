@@ -1,4 +1,5 @@
 import AppKit
+import FolioCore
 import SwiftUI
 
 /// Native AppKit plain-text editor for the split view — the counterpart

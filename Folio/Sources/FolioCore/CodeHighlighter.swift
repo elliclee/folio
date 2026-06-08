@@ -5,7 +5,7 @@ import SwiftUI
 /// counterpart of highlight.js in the Tauri version. Token colors follow
 /// the github-dark scheme the Tauri app imports, which works on the dark
 /// code-block backgrounds every theme uses.
-enum CodeTokenKind {
+public enum CodeTokenKind {
     case keyword
     case string
     case comment
@@ -14,20 +14,20 @@ enum CodeTokenKind {
     case type      // capitalized identifiers
 }
 
-struct CodeToken: Equatable {
-    let range: Range<Int>  // character offsets
-    let kind: CodeTokenKind
+public struct CodeToken: Equatable {
+    public let range: Range<Int>  // character offsets
+    public let kind: CodeTokenKind
 }
 
-struct CodeLanguage {
-    let keywords: Set<String>
-    let literals: Set<String>
-    let lineComments: [String]
-    let blockComment: (start: String, end: String)?
-    let stringDelimiters: Set<Character>
-    let highlightsCapitalizedTypes: Bool
+public struct CodeLanguage {
+    public let keywords: Set<String>
+    public let literals: Set<String>
+    public let lineComments: [String]
+    public let blockComment: (start: String, end: String)?
+    public let stringDelimiters: Set<Character>
+    public let highlightsCapitalizedTypes: Bool
 
-    init(
+    public init(
         keywords: Set<String>,
         literals: Set<String> = ["true", "false", "null"],
         lineComments: [String] = ["//"],
@@ -44,8 +44,8 @@ struct CodeLanguage {
     }
 }
 
-enum CodeHighlighter {
-    static func language(named name: String?) -> CodeLanguage? {
+public enum CodeHighlighter {
+    public static func language(named name: String?) -> CodeLanguage? {
         guard let name = name?.lowercased(), !name.isEmpty else {
             return nil
         }
@@ -54,10 +54,10 @@ enum CodeHighlighter {
 
     /// Code blocks beyond this size render unhighlighted (matches the
     /// spirit of editors capping highlight work on giant files).
-    static let maxTokenizedCharacters = 200_000
+    public static let maxTokenizedCharacters = 200_000
 
     /// Tokenizes `code`; ranges are non-overlapping and in order.
-    static func tokenize(_ code: String, language: CodeLanguage) -> [CodeToken] {
+    public static func tokenize(_ code: String, language: CodeLanguage) -> [CodeToken] {
         let chars = Array(code)
         guard chars.count <= maxTokenizedCharacters else {
             return []
@@ -173,7 +173,7 @@ enum CodeHighlighter {
 
     // MARK: - Token colors (github-dark, as used by the Tauri version)
 
-    static func color(for kind: CodeTokenKind) -> Color {
+    public static func color(for kind: CodeTokenKind) -> Color {
         switch kind {
         case .keyword: Color(hex: 0xFF7B72)
         case .string: Color(hex: 0xA5D6FF)

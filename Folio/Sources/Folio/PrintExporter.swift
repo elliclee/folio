@@ -1,4 +1,5 @@
 import AppKit
+import FolioCore
 
 /// Native print/PDF export via `NSPrintOperation` — replaces the Tauri
 /// version's hidden print-window + `window.print()` dance. The native

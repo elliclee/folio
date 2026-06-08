@@ -4,14 +4,14 @@ import Observation
 /// Pinned + recent workspace folders, ported from `workspace-folders.ts`.
 /// One shared store backs every window (the Tauri version syncs windows
 /// through localStorage `storage` events; here observation does it).
-struct WorkspaceFolder: Codable, Equatable, Identifiable {
-    let name: String
-    let path: String
+public struct WorkspaceFolder: Codable, Equatable, Identifiable {
+    public let name: String
+    public let path: String
 
-    var id: String { path }
+    public var id: String { path }
 
     /// Mirrors `createWorkspaceFolder` / `getFolderName`.
-    init(path: String) {
+    public init(path: String) {
         self.path = path
         let trimmed = path.replacingOccurrences(
             of: "[\\\\/]+$",
@@ -22,27 +22,32 @@ struct WorkspaceFolder: Codable, Equatable, Identifiable {
         self.name = lastSegment ?? (trimmed.isEmpty ? path : trimmed)
     }
 
-    init(name: String, path: String) {
+    public init(name: String, path: String) {
         self.name = name
         self.path = path
     }
 }
 
-struct WorkspaceFolderState: Codable, Equatable {
-    var pinned: [WorkspaceFolder] = []
-    var recent: [WorkspaceFolder] = []
+public struct WorkspaceFolderState: Codable, Equatable {
+    public var pinned: [WorkspaceFolder] = []
+    public var recent: [WorkspaceFolder] = []
+
+    public init(pinned: [WorkspaceFolder] = [], recent: [WorkspaceFolder] = []) {
+        self.pinned = pinned
+        self.recent = recent
+    }
 }
 
-enum WorkspaceFolderRules {
-    static let maxRecentFolders = 5
+public enum WorkspaceFolderRules {
+    public static let maxRecentFolders = 5
 
-    static func dedupe(_ folders: [WorkspaceFolder]) -> [WorkspaceFolder] {
+    public static func dedupe(_ folders: [WorkspaceFolder]) -> [WorkspaceFolder] {
         var seen = Set<String>()
         return folders.filter { seen.insert($0.path).inserted }
     }
 
     /// Mirrors `rememberRecentWorkspaceFolder`: most recent first, capped.
-    static func rememberRecent(_ state: WorkspaceFolderState, folderPath: String) -> WorkspaceFolderState {
+    public static func rememberRecent(_ state: WorkspaceFolderState, folderPath: String) -> WorkspaceFolderState {
         let folder = WorkspaceFolder(path: folderPath)
         let recent = [folder] + state.recent.filter { $0.path != folder.path }
         return WorkspaceFolderState(
@@ -52,7 +57,7 @@ enum WorkspaceFolderRules {
     }
 
     /// Mirrors `pinWorkspaceFolder`.
-    static func pin(_ state: WorkspaceFolderState, folderPath: String) -> WorkspaceFolderState {
+    public static func pin(_ state: WorkspaceFolderState, folderPath: String) -> WorkspaceFolderState {
         WorkspaceFolderState(
             pinned: dedupe(state.pinned + [WorkspaceFolder(path: folderPath)]),
             recent: dedupe(state.recent)
@@ -61,7 +66,7 @@ enum WorkspaceFolderRules {
 
     /// Mirrors `unpinWorkspaceFolder`: unpinning re-files the folder
     /// under recents so it stays reachable.
-    static func unpin(_ state: WorkspaceFolderState, folderPath: String) -> WorkspaceFolderState {
+    public static func unpin(_ state: WorkspaceFolderState, folderPath: String) -> WorkspaceFolderState {
         rememberRecent(
             WorkspaceFolderState(
                 pinned: state.pinned.filter { $0.path != folderPath },
@@ -72,18 +77,18 @@ enum WorkspaceFolderRules {
     }
 
     /// Mirrors `clearRecentWorkspaceFolders`.
-    static func clearRecent(_ state: WorkspaceFolderState) -> WorkspaceFolderState {
+    public static func clearRecent(_ state: WorkspaceFolderState) -> WorkspaceFolderState {
         WorkspaceFolderState(pinned: state.pinned, recent: [])
     }
 
     /// Mirrors `getRecentWorkspaceFolders`: hides recents already pinned.
-    static func visibleRecent(_ state: WorkspaceFolderState) -> [WorkspaceFolder] {
+    public static func visibleRecent(_ state: WorkspaceFolderState) -> [WorkspaceFolder] {
         let pinnedPaths = Set(state.pinned.map(\.path))
         return state.recent.filter { !pinnedPaths.contains($0.path) }
     }
 
     /// Mirrors `normalizeWorkspaceFolderState`.
-    static func normalize(_ state: WorkspaceFolderState) -> WorkspaceFolderState {
+    public static func normalize(_ state: WorkspaceFolderState) -> WorkspaceFolderState {
         WorkspaceFolderState(
             pinned: dedupe(state.pinned),
             recent: Array(dedupe(state.recent).prefix(maxRecentFolders))
@@ -93,9 +98,9 @@ enum WorkspaceFolderRules {
 
 @MainActor
 @Observable
-final class WorkspaceFoldersStore {
-    static let storageKey = "folio.workspaceFolders.v1"
-    static let shared = WorkspaceFoldersStore()
+public final class WorkspaceFoldersStore {
+    public static let storageKey = "folio.workspaceFolders.v1"
+    public static let shared = WorkspaceFoldersStore()
 
     private let defaults: UserDefaults
 
@@ -103,10 +108,10 @@ final class WorkspaceFoldersStore {
         didSet { save() }
     }
 
-    var pinned: [WorkspaceFolder] { state.pinned }
-    var visibleRecent: [WorkspaceFolder] { WorkspaceFolderRules.visibleRecent(state) }
+    public var pinned: [WorkspaceFolder] { state.pinned }
+    public var visibleRecent: [WorkspaceFolder] { WorkspaceFolderRules.visibleRecent(state) }
 
-    init(defaults: UserDefaults = .standard) {
+    public init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         if let data = defaults.data(forKey: Self.storageKey),
            let decoded = try? JSONDecoder().decode(WorkspaceFolderState.self, from: data) {
@@ -116,23 +121,23 @@ final class WorkspaceFoldersStore {
         }
     }
 
-    func rememberRecent(folderPath: String) {
+    public func rememberRecent(folderPath: String) {
         state = WorkspaceFolderRules.rememberRecent(state, folderPath: folderPath)
     }
 
-    func pin(folderPath: String) {
+    public func pin(folderPath: String) {
         state = WorkspaceFolderRules.pin(state, folderPath: folderPath)
     }
 
-    func unpin(folderPath: String) {
+    public func unpin(folderPath: String) {
         state = WorkspaceFolderRules.unpin(state, folderPath: folderPath)
     }
 
-    func isPinned(folderPath: String) -> Bool {
+    public func isPinned(folderPath: String) -> Bool {
         state.pinned.contains { $0.path == folderPath }
     }
 
-    func togglePin(folderPath: String) {
+    public func togglePin(folderPath: String) {
         if isPinned(folderPath: folderPath) {
             unpin(folderPath: folderPath)
         } else {
@@ -140,7 +145,7 @@ final class WorkspaceFoldersStore {
         }
     }
 
-    func clearRecent() {
+    public func clearRecent() {
         state = WorkspaceFolderRules.clearRecent(state)
     }
 

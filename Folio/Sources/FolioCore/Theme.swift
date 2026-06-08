@@ -3,7 +3,7 @@ import SwiftUI
 /// Reading themes ported from `Previewer.md/src/index.css`.
 /// Token names mirror the CSS custom properties so the two
 /// implementations stay easy to diff.
-enum AppTheme: String, CaseIterable, Identifiable {
+public enum AppTheme: String, CaseIterable, Identifiable {
     case vercel
     case claude
     case claudeDark = "claude-dark"
@@ -12,11 +12,11 @@ enum AppTheme: String, CaseIterable, Identifiable {
     case dark
     case highContrast = "hc"
 
-    static let `default`: AppTheme = .vercel
+    public static let `default`: AppTheme = .vercel
 
-    var id: String { rawValue }
+    public var id: String { rawValue }
 
-    var label: String {
+    public var label: String {
         switch self {
         case .claude: "Claude"
         case .claudeDark: "Claude Dark"
@@ -31,7 +31,7 @@ enum AppTheme: String, CaseIterable, Identifiable {
     /// Typographic voice: warm reading themes set headings in New York
     /// (system serif) for an editorial, book-like feel; tool-like themes
     /// keep tight sans headings.
-    var headingDesign: Font.Design {
+    public var headingDesign: Font.Design {
         switch self {
         case .claude, .claudeDark, .lovable: .serif
         default: .default
@@ -39,14 +39,14 @@ enum AppTheme: String, CaseIterable, Identifiable {
     }
 
     /// Matches `getThemeColorScheme` in theme-class.ts.
-    var colorScheme: ColorScheme {
+    public var colorScheme: ColorScheme {
         switch self {
         case .dark, .highContrast, .claudeDark, .spotify: .dark
         default: .light
         }
     }
 
-    var palette: ThemePalette {
+    public var palette: ThemePalette {
         switch self {
         case .dark: .dark
         case .highContrast: .highContrast
@@ -59,28 +59,28 @@ enum AppTheme: String, CaseIterable, Identifiable {
     }
 }
 
-struct ThemePalette: Equatable {
-    let window: Color
-    let editor: Color
-    let preview: Color
-    let border: Color
-    let textPrimary: Color
-    let textSecondary: Color
-    let textMuted: Color
-    let accent: Color
-    let accentHover: Color
-    let accentFg: Color
-    let header: Color
-    let btnBg: Color
-    let btnHover: Color
-    let codeBlockBg: Color
-    let codeBlockFg: Color
-    let codeBlockBorder: Color
-    let inlineCodeBg: Color
-    let inlineCodeFg: Color
-    let inlineCodeBorder: Color
+public struct ThemePalette: Equatable {
+    public let window: Color
+    public let editor: Color
+    public let preview: Color
+    public let border: Color
+    public let textPrimary: Color
+    public let textSecondary: Color
+    public let textMuted: Color
+    public let accent: Color
+    public let accentHover: Color
+    public let accentFg: Color
+    public let header: Color
+    public let btnBg: Color
+    public let btnHover: Color
+    public let codeBlockBg: Color
+    public let codeBlockFg: Color
+    public let codeBlockBorder: Color
+    public let inlineCodeBg: Color
+    public let inlineCodeFg: Color
+    public let inlineCodeBorder: Color
 
-    static let dark = ThemePalette(
+    public static let dark = ThemePalette(
         window: Color(hex: 0x0F172A),
         editor: Color(hex: 0x1E293B),
         preview: Color(hex: 0x0F172A),
@@ -102,7 +102,7 @@ struct ThemePalette: Equatable {
         inlineCodeBorder: Color(hex: 0x475569)
     )
 
-    static let highContrast = ThemePalette(
+    public static let highContrast = ThemePalette(
         window: Color(hex: 0x000000),
         editor: Color(hex: 0x000000),
         preview: Color(hex: 0x000000),
@@ -124,7 +124,7 @@ struct ThemePalette: Equatable {
         inlineCodeBorder: Color(hex: 0xFFFFFF)
     )
 
-    static let claude = ThemePalette(
+    public static let claude = ThemePalette(
         window: Color(hex: 0xF5F4ED),
         editor: Color(hex: 0xFAF9F5),
         preview: Color(hex: 0xFAF9F5),
@@ -146,7 +146,7 @@ struct ThemePalette: Equatable {
         inlineCodeBorder: Color(hex: 0xD1CFC5)
     )
 
-    static let claudeDark = ThemePalette(
+    public static let claudeDark = ThemePalette(
         window: Color(hex: 0x1A1512),
         editor: Color(hex: 0x211B18),
         preview: Color(hex: 0x211B18),
@@ -168,7 +168,7 @@ struct ThemePalette: Equatable {
         inlineCodeBorder: Color(hex: 0x4D3830)
     )
 
-    static let vercel = ThemePalette(
+    public static let vercel = ThemePalette(
         window: Color(hex: 0xFFFFFF),
         editor: Color(hex: 0xFFFFFF),
         preview: Color(hex: 0xFFFFFF),
@@ -190,7 +190,7 @@ struct ThemePalette: Equatable {
         inlineCodeBorder: Color(hex: 0xEBEBEB)
     )
 
-    static let lovable = ThemePalette(
+    public static let lovable = ThemePalette(
         window: Color(hex: 0xF7F4ED),
         editor: Color(hex: 0xFCFBF8),
         preview: Color(hex: 0xFCFBF8),
@@ -212,7 +212,7 @@ struct ThemePalette: Equatable {
         inlineCodeBorder: Color(hex: 0x1C1C1C, alpha: 0.12)
     )
 
-    static let spotify = ThemePalette(
+    public static let spotify = ThemePalette(
         window: Color(hex: 0x121212),
         editor: Color(hex: 0x181818),
         preview: Color(hex: 0x181818),
@@ -236,7 +236,7 @@ struct ThemePalette: Equatable {
 }
 
 extension Color {
-    init(hex: UInt32, alpha: Double = 1.0) {
+    public init(hex: UInt32, alpha: Double = 1.0) {
         self.init(
             .sRGB,
             red: Double((hex >> 16) & 0xFF) / 255.0,

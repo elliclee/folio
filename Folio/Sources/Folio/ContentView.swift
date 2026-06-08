@@ -1,4 +1,5 @@
 import SwiftUI
+import FolioCore
 
 struct ContentView: View {
     @Environment(AppViewModel.self) private var viewModel

@@ -6,7 +6,7 @@ import SwiftUI
 
 /// Flat block model produced from a swift-markdown `Document`,
 /// rendered by `MarkdownBlockView`.
-enum MarkdownBlock: Identifiable, Equatable {
+public enum MarkdownBlock: Identifiable, Equatable {
     case heading(id: Int, level: Int, text: AttributedString)
     case paragraph(id: Int, text: AttributedString)
     /// `code` is the raw text (for copy/export); `display` is the themed
@@ -19,7 +19,7 @@ enum MarkdownBlock: Identifiable, Equatable {
     case table(id: Int, header: [AttributedString], rows: [[AttributedString]], alignments: [MarkdownTableAlignment])
     case thematicBreak(id: Int)
 
-    var id: Int {
+    public var id: Int {
         switch self {
         case .heading(let id, _, _),
              .paragraph(let id, _),
@@ -36,14 +36,14 @@ enum MarkdownBlock: Identifiable, Equatable {
 
 /// GitHub-style alert kinds. Colors are fixed semantic hues that read on
 /// every theme; icons/labels mirror GitHub's rendering.
-enum MarkdownCalloutKind: String, CaseIterable {
+public enum MarkdownCalloutKind: String, CaseIterable {
     case note, tip, important, warning, caution
 
-    static func parse(_ token: String) -> MarkdownCalloutKind? {
+    public static func parse(_ token: String) -> MarkdownCalloutKind? {
         MarkdownCalloutKind(rawValue: token.lowercased())
     }
 
-    var label: String {
+    public var label: String {
         switch self {
         case .note: "Note"
         case .tip: "Tip"
@@ -53,7 +53,7 @@ enum MarkdownCalloutKind: String, CaseIterable {
         }
     }
 
-    var systemImage: String {
+    public var systemImage: String {
         switch self {
         case .note: "info.circle.fill"
         case .tip: "lightbulb.fill"
@@ -63,7 +63,7 @@ enum MarkdownCalloutKind: String, CaseIterable {
         }
     }
 
-    var tint: Color {
+    public var tint: Color {
         switch self {
         case .note: Color(hex: 0x3B82F6)
         case .tip: Color(hex: 0x22C55E)
@@ -74,16 +74,16 @@ enum MarkdownCalloutKind: String, CaseIterable {
     }
 }
 
-struct MarkdownListItem: Identifiable, Equatable {
-    let id: Int
-    let checkbox: Bool?  // nil = plain item, true/false = GFM task list state
-    let blocks: [MarkdownBlock]
+public struct MarkdownListItem: Identifiable, Equatable {
+    public let id: Int
+    public let checkbox: Bool?  // nil = plain item, true/false = GFM task list state
+    public let blocks: [MarkdownBlock]
 }
 
-enum MarkdownTableAlignment: Equatable {
+public enum MarkdownTableAlignment: Equatable {
     case left, center, right
 
-    var textAlignment: TextAlignment {
+    public var textAlignment: TextAlignment {
         switch self {
         case .left: .leading
         case .center: .center
@@ -91,7 +91,7 @@ enum MarkdownTableAlignment: Equatable {
         }
     }
 
-    var frameAlignment: Alignment {
+    public var frameAlignment: Alignment {
         switch self {
         case .left: .leading
         case .center: .center
@@ -102,17 +102,17 @@ enum MarkdownTableAlignment: Equatable {
 
 // MARK: - Typography (mirrors .markdown-content rules in index.css)
 
-enum MarkdownTypography {
+public enum MarkdownTypography {
     /// Editorial reading scale (minor-third-ish steps off a 15.5 body).
-    static let bodySize: CGFloat = 15.5
-    static let codeSize: CGFloat = 13
+    public static let bodySize: CGFloat = 15.5
+    public static let codeSize: CGFloat = 13
 
     /// Comfortable book measure: ~68 characters at body size.
-    static let readingMeasure: CGFloat = 720
+    public static let readingMeasure: CGFloat = 720
 
     /// Even heading ratios off the body size (borrowed from Resomark):
     /// 1.867 / 1.6 / 1.4 / 1.2 / 1.067. Scales with the body size.
-    static func headingSize(level: Int) -> CGFloat {
+    public static func headingSize(level: Int) -> CGFloat {
         let ratio: CGFloat = switch level {
         case 1: 1.867
         case 2: 1.6
@@ -123,12 +123,12 @@ enum MarkdownTypography {
         return bodySize * ratio
     }
 
-    static func headingWeight(level: Int) -> Font.Weight {
+    public static func headingWeight(level: Int) -> Font.Weight {
         level == 1 ? .bold : .semibold
     }
 
     /// Large display sizes read better slightly tightened.
-    static func headingKern(level: Int) -> CGFloat {
+    public static func headingKern(level: Int) -> CGFloat {
         switch level {
         case 1: -0.6
         case 2: -0.3
@@ -139,13 +139,18 @@ enum MarkdownTypography {
 
 // MARK: - Renderer
 
-struct MarkdownRenderer {
-    let palette: ThemePalette
+public struct MarkdownRenderer {
+    public let palette: ThemePalette
     /// Heading typeface voice: serif (New York) for the warm reading
     /// themes, default sans for the tool-like themes.
-    var headingDesign: Font.Design = .default
+    public var headingDesign: Font.Design = .default
 
-    func render(_ markdown: String) -> [MarkdownBlock] {
+    public init(palette: ThemePalette, headingDesign: Font.Design = .default) {
+        self.palette = palette
+        self.headingDesign = headingDesign
+    }
+
+    public func render(_ markdown: String) -> [MarkdownBlock] {
         let document = Document(parsing: markdown)
         var counter = 0
         return document.blockChildren.compactMap { renderBlock($0, counter: &counter) }
@@ -338,7 +343,7 @@ struct MarkdownRenderer {
 
     // MARK: Inline rendering
 
-    func renderInline(
+    public func renderInline(
         _ children: some Sequence<InlineMarkup>,
         baseSize: CGFloat,
         bold: Bool = false
@@ -354,7 +359,7 @@ struct MarkdownRenderer {
         return renderInline(children, context: &context)
     }
 
-    func renderHeadingInline(
+    public func renderHeadingInline(
         _ children: some Sequence<InlineMarkup>,
         level: Int
     ) -> AttributedString {

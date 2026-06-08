@@ -8,7 +8,7 @@ import SwiftUI
 /// count always agrees with what is highlighted.
 
 /// Mirrors `getNextFindMatchIndex`: wraps around in both directions.
-func nextFindMatchIndex(currentIndex: Int, matchCount: Int, direction: Int) -> Int {
+public func nextFindMatchIndex(currentIndex: Int, matchCount: Int, direction: Int) -> Int {
     guard matchCount > 0 else {
         return -1
     }
@@ -20,16 +20,16 @@ func nextFindMatchIndex(currentIndex: Int, matchCount: Int, direction: Int) -> I
     return (currentIndex + direction + matchCount) % matchCount
 }
 
-struct FindHighlightResult {
-    var blocks: [MarkdownBlock]
-    var matchCount: Int
+public struct FindHighlightResult {
+    public var blocks: [MarkdownBlock]
+    public var matchCount: Int
     /// Top-level block containing the current match, for scroll-to.
-    var currentMatchBlockId: Int?
+    public var currentMatchBlockId: Int?
 }
 
-enum FindHighlighter {
+public enum FindHighlighter {
     /// Case-insensitive, non-overlapping (same as `findMarkdownMatches`).
-    static func matchRanges(of needle: String, in text: String) -> [Range<Int>] {
+    public static func matchRanges(of needle: String, in text: String) -> [Range<Int>] {
         let needle = needle.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         guard !needle.isEmpty else {
             return []
@@ -52,7 +52,7 @@ enum FindHighlighter {
 
     /// Walks the rendered blocks in document order, highlighting every
     /// match and emphasizing the current one.
-    static func apply(
+    public static func apply(
         to blocks: [MarkdownBlock],
         query: String,
         currentIndex: Int,

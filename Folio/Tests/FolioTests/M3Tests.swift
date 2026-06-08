@@ -1,4 +1,5 @@
 import AppKit
+import FolioCore
 import XCTest
 @testable import Folio
 

@@ -1,4 +1,5 @@
 import AppKit
+import FolioCore
 import Markdown
 
 /// Mirrors `getPrintDocumentTitle` in pdf-export.ts: strip the last

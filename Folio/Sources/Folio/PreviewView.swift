@@ -1,4 +1,5 @@
 import SwiftUI
+import FolioCore
 
 /// Rendered markdown reading pane, equivalent to the preview pane
 /// (`.markdown-content`) in App.tsx.

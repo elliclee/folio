@@ -1,4 +1,5 @@
 import AppKit
+import FolioCore
 import Observation
 import SwiftUI
 import UniformTypeIdentifiers
@@ -58,15 +59,18 @@ final class AppViewModel {
 
     let scrollCoordinator = PaneScrollCoordinator()
     let workspaceFolders: WorkspaceFoldersStore
+    let recentDocuments: RecentDocumentsStore
 
     /// FOLIO_* env seeds apply once, to the first window only.
     private static var didApplyEnvironmentSeeds = false
 
     init(
         seed: WorkspaceSeed = WorkspaceSeed(),
-        workspaceFolders: WorkspaceFoldersStore? = nil
+        workspaceFolders: WorkspaceFoldersStore? = nil,
+        recentDocuments: RecentDocumentsStore? = nil
     ) {
         self.workspaceFolders = workspaceFolders ?? WorkspaceFoldersStore.shared
+        self.recentDocuments = recentDocuments ?? RecentDocumentsStore.shared
 
         if let theme = seed.theme.flatMap(AppTheme.init(rawValue:)) {
             self.theme = theme
@@ -395,11 +399,16 @@ final class AppViewModel {
             markdown = text
             savedMarkdown = text
             activeFile = file
+            recentDocuments.remember(name: file.name, path: file.path)
             return true
         } catch {
             presentError(error.localizedDescription, title: "Open File")
             return false
         }
+    }
+
+    func openRecentDocument(_ document: RecentDocument) {
+        loadFile(MarkdownFileItem(name: document.name, path: document.path))
     }
 
     func toggleDirectory(_ path: String) {

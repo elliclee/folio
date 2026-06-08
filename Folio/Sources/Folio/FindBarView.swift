@@ -1,4 +1,5 @@
 import SwiftUI
+import FolioCore
 
 /// Find-in-document bar, equivalent to the find UI in the React header.
 struct FindBarView: View {

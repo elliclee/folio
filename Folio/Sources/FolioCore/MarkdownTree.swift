@@ -2,54 +2,59 @@ import Foundation
 
 /// File-tree model and scanner, behavior-aligned with
 /// `Previewer.md/src/markdown-files.ts`.
-enum MarkdownTreeNode: Identifiable, Equatable {
+public enum MarkdownTreeNode: Identifiable, Equatable {
     case file(MarkdownFileItem)
     case directory(MarkdownDirectoryItem)
 
-    var id: String { path }
+    public var id: String { path }
 
-    var path: String {
+    public var path: String {
         switch self {
         case .file(let file): file.path
         case .directory(let directory): directory.path
         }
     }
 
-    var name: String {
+    public var name: String {
         switch self {
         case .file(let file): file.name
         case .directory(let directory): directory.name
         }
     }
 
-    var isDirectory: Bool {
+    public var isDirectory: Bool {
         if case .directory = self { return true }
         return false
     }
 }
 
-struct MarkdownFileItem: Identifiable, Equatable {
-    let name: String
-    let path: String
+public struct MarkdownFileItem: Identifiable, Equatable {
+    public let name: String
+    public let path: String
 
-    var id: String { path }
+    public var id: String { path }
+
+    public init(name: String, path: String) {
+        self.name = name
+        self.path = path
+    }
 }
 
-struct MarkdownDirectoryItem: Equatable {
-    let name: String
-    let path: String
-    let children: [MarkdownTreeNode]
+public struct MarkdownDirectoryItem: Equatable {
+    public let name: String
+    public let path: String
+    public let children: [MarkdownTreeNode]
 }
 
-enum MarkdownTree {
+public enum MarkdownTree {
     /// Mirrors MARKDOWN_FILE_PATTERN: `\.(md|markdown|txt)$/i`.
-    static let supportedExtensions: Set<String> = ["md", "markdown", "txt"]
+    public static let supportedExtensions: Set<String> = ["md", "markdown", "txt"]
 
     /// Extensions accepted when a file is opened from Finder / Open dialog
     /// (`filterSupportedOpenPaths` only allows md/markdown).
-    static let supportedOpenExtensions: Set<String> = ["md", "markdown"]
+    public static let supportedOpenExtensions: Set<String> = ["md", "markdown"]
 
-    static func isSupportedTreeFile(_ name: String) -> Bool {
+    public static func isSupportedTreeFile(_ name: String) -> Bool {
         supportedExtensions.contains((name as NSString).pathExtension.lowercased())
     }
 
@@ -57,7 +62,7 @@ enum MarkdownTree {
     /// descendants (or that fail to read) are pruned, directories sort
     /// before files, both alphabetically. Hidden entries (.git, …) are
     /// skipped — scanning them made large folders appear to hang.
-    static func collect(
+    public static func collect(
         at directoryURL: URL,
         fileManager: FileManager = .default
     ) -> [MarkdownTreeNode] {
@@ -103,7 +108,7 @@ enum MarkdownTree {
 
     /// Mirrors `getDefaultExpandedDirectoryPaths` (maxVisibleDepth = 3,
     /// root level counts as depth 1).
-    static func defaultExpandedDirectoryPaths(
+    public static func defaultExpandedDirectoryPaths(
         _ tree: [MarkdownTreeNode],
         maxVisibleDepth: Int = 3,
         currentDepth: Int = 1
@@ -121,7 +126,7 @@ enum MarkdownTree {
     }
 
     /// Depth-first search for the first markdown file.
-    static func firstMarkdownFile(in tree: [MarkdownTreeNode]) -> MarkdownFileItem? {
+    public static func firstMarkdownFile(in tree: [MarkdownTreeNode]) -> MarkdownFileItem? {
         for node in tree {
             switch node {
             case .file(let file):
@@ -136,7 +141,7 @@ enum MarkdownTree {
     }
 
     /// Mirrors `wrapMarkdownTreeInRootDirectory`.
-    static func wrappedInRootDirectory(
+    public static func wrappedInRootDirectory(
         path: String,
         children: [MarkdownTreeNode]
     ) -> [MarkdownTreeNode] {
@@ -152,7 +157,7 @@ enum MarkdownTree {
     }
 
     /// Mirrors `findTreeFileByPath` in opened-files.ts.
-    static func findFile(in tree: [MarkdownTreeNode], byPath path: String) -> MarkdownFileItem? {
+    public static func findFile(in tree: [MarkdownTreeNode], byPath path: String) -> MarkdownFileItem? {
         for node in tree {
             switch node {
             case .file(let file):

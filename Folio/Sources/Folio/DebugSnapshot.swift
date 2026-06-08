@@ -1,4 +1,5 @@
 import AppKit
+import FolioCore
 
 /// Debug helper: `FOLIO_SNAPSHOT=/tmp/shot.png` writes a PNG of the
 /// main window ~2s after launch. The app renders its own window, so this
