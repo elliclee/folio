@@ -8,7 +8,7 @@ cd "$(dirname "$0")/.."
 APP_NAME="Folio"
 # FOLIO_VERSION lets CI stamp the bundle from the git tag (strips a
 # leading "v"); falls back to the baseline version for local builds.
-VERSION="${FOLIO_VERSION:-0.5.0}"
+VERSION="${FOLIO_VERSION:-0.5.1}"
 VERSION="${VERSION#v}"
 BUNDLE_ID="com.ellic.folio"
 DIST="dist"
