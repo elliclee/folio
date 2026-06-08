@@ -115,25 +115,31 @@ suppresses the default WindowGroup window.
 
 ## Releasing
 
+The version lives in one place — the `VERSION` file. `bundle.sh` reads it
+(an explicit `FOLIO_VERSION` env, e.g. a CI tag, overrides it).
+
 **Automated (preferred):** push a `v*` tag — the
 [`folio-release`](../.github/workflows/folio-release.yml) workflow builds
 and tests on a macOS runner, bundles `Folio.app` + `.dmg`, and publishes a
 GitHub Release (the tag stamps the bundle version via `FOLIO_VERSION`).
 
 ```sh
-git tag v0.5.1 && git push origin v0.5.1
+echo 0.5.2 > VERSION && git commit -am "Bump Folio to 0.5.2"
+git tag v0.5.2 && git push origin main v0.5.2
 ```
 
-**Manual (no CI / billing locked):** build the dmg and publish it with the
-`gh` CLI — releases don't go through Actions, so this works regardless of
-Actions billing.
+**Manual (no CI / billing locked):** bump `VERSION`, build the dmg, and
+publish it with the `gh` CLI — releases don't go through Actions, so this
+works regardless of Actions billing.
 
 ```sh
-VERSION=0.5.1
-FOLIO_VERSION=$VERSION ./scripts/bundle.sh --dmg
+echo 0.5.2 > VERSION
+VERSION=$(cat VERSION)
+./scripts/bundle.sh --dmg                        # reads VERSION
 cp dist/Folio.dmg ~/Desktop/Folio-$VERSION.dmg
 
-git tag v$VERSION && git push origin v$VERSION   # if not already tagged
+git commit -am "Bump Folio to $VERSION"
+git tag v$VERSION && git push origin main v$VERSION
 gh release create v$VERSION \
   "dist/Folio.dmg#Folio-$VERSION.dmg (macOS)" \
   --repo elliclee/folio --title "Folio $VERSION" --generate-notes

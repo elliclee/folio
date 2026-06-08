@@ -6,9 +6,9 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 APP_NAME="Folio"
-# FOLIO_VERSION lets CI stamp the bundle from the git tag (strips a
-# leading "v"); falls back to the baseline version for local builds.
-VERSION="${FOLIO_VERSION:-0.5.1}"
+# Single source of truth is the VERSION file. FOLIO_VERSION (e.g. a CI
+# git tag) overrides it; a leading "v" is stripped either way.
+VERSION="${FOLIO_VERSION:-$(cat VERSION)}"
 VERSION="${VERSION#v}"
 BUNDLE_ID="com.ellic.folio"
 DIST="dist"
