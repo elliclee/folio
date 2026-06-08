@@ -59,7 +59,7 @@ enum AppTheme: String, CaseIterable, Identifiable {
     }
 }
 
-struct ThemePalette {
+struct ThemePalette: Equatable {
     let window: Color
     let editor: Color
     let preview: Color

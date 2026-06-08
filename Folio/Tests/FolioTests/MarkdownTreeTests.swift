@@ -144,6 +144,37 @@ final class MarkdownRendererTests: XCTestCase {
         guard case .thematicBreak = blocks[5] else { return XCTFail("hr") }
     }
 
+    func testGfmAlertBecomesCalloutWithMarkerStripped() {
+        let blocks = renderer.render("""
+        > [!WARNING]
+        > Back up your data first.
+
+        > a plain quote
+        """)
+
+        guard case .callout(_, let kind, let body) = blocks.first else {
+            return XCTFail("Expected a callout block")
+        }
+        XCTAssertEqual(kind, .warning)
+        guard case .paragraph(_, let text) = body.first else {
+            return XCTFail("Expected paragraph in callout")
+        }
+        // The [!WARNING] marker must not leak into the rendered text.
+        XCTAssertEqual(String(text.characters), "Back up your data first.")
+
+        // A blockquote without an alert marker stays a blockquote.
+        guard case .blockquote = blocks.last else {
+            return XCTFail("Expected plain blockquote")
+        }
+    }
+
+    func testCalloutKindParsingIsCaseInsensitive() {
+        XCTAssertEqual(MarkdownCalloutKind.parse("NOTE"), .note)
+        XCTAssertEqual(MarkdownCalloutKind.parse("tip"), .tip)
+        XCTAssertEqual(MarkdownCalloutKind.parse("Caution"), .caution)
+        XCTAssertNil(MarkdownCalloutKind.parse("bogus"))
+    }
+
     func testOrderedListKeepsStartIndex() {
         let blocks = renderer.render("""
         3. three

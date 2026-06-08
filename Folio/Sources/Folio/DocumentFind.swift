@@ -97,6 +97,9 @@ enum FindHighlighter {
             case .blockquote(let id, let blocks):
                 return .blockquote(id: id, blocks: blocks.map { highlight($0) })
 
+            case .callout(let id, let kind, let blocks):
+                return .callout(id: id, kind: kind, blocks: blocks.map { highlight($0) })
+
             case .list(let id, let items, let ordered, let startIndex):
                 let highlightedItems = items.map { item in
                     MarkdownListItem(

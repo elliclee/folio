@@ -4,17 +4,38 @@ import SwiftUI
 /// (`.markdown-content`) in App.tsx.
 struct PreviewView: View {
     @Environment(AppViewModel.self) private var viewModel
+
+    var body: some View {
+        // Derive content from the view model here; the scroll-owning
+        // subview keeps its own @State, so user-scroll invalidations don't
+        // re-run this find/highlight work every frame.
+        let findResult = viewModel.findResult
+        return PreviewScrollView(
+            blocks: findResult?.blocks ?? viewModel.renderedBlocks,
+            palette: viewModel.palette,
+            currentMatchBlockId: findResult?.currentMatchBlockId,
+            coordinator: viewModel.scrollCoordinator
+        )
+    }
+}
+
+/// Owns the scroll position. Isolating it here means the user scrolling
+/// only re-evaluates this view, and `.equatable()` lets unchanged blocks
+/// skip re-rendering during those frames.
+private struct PreviewScrollView: View {
+    let blocks: [MarkdownBlock]
+    let palette: ThemePalette
+    let currentMatchBlockId: Int?
+    let coordinator: PaneScrollCoordinator
+
     @State private var scrollPosition = ScrollPosition()
 
     var body: some View {
-        let palette = viewModel.palette
-        let findResult = viewModel.findResult
-        let blocks = findResult?.blocks ?? viewModel.renderedBlocks
-
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 0) {
                 ForEach(blocks) { block in
                     MarkdownBlockView(block: block, palette: palette)
+                        .equatable()
                 }
             }
             .scrollTargetLayout()
@@ -32,16 +53,16 @@ struct PreviewView: View {
                 viewportHeight: geometry.containerSize.height
             )
         } action: { _, metrics in
-            viewModel.scrollCoordinator.previewDidScroll(metrics)
+            coordinator.previewDidScroll(metrics)
         }
         .background(palette.preview)
         .textSelection(.enabled)
         .onAppear {
-            viewModel.scrollCoordinator.scrollPreview = { offset in
+            coordinator.scrollPreview = { offset in
                 scrollPosition.scrollTo(y: offset)
             }
         }
-        .onChange(of: findResult?.currentMatchBlockId) { _, blockId in
+        .onChange(of: currentMatchBlockId) { _, blockId in
             if let blockId {
                 withAnimation(.easeOut(duration: 0.15)) {
                     scrollPosition.scrollTo(id: blockId, anchor: .center)
@@ -51,10 +72,18 @@ struct PreviewView: View {
     }
 }
 
-struct MarkdownBlockView: View {
+struct MarkdownBlockView: View, Equatable {
     let block: MarkdownBlock
     let palette: ThemePalette
     var nested = false
+
+    // Lets `.equatable()` skip re-rendering a block whose content and
+    // theme are unchanged — the key to smooth scrolling.
+    static func == (lhs: MarkdownBlockView, rhs: MarkdownBlockView) -> Bool {
+        lhs.nested == rhs.nested
+            && lhs.palette == rhs.palette
+            && lhs.block == rhs.block
+    }
 
     var body: some View {
         switch block {
@@ -63,7 +92,7 @@ struct MarkdownBlockView: View {
                 // Roomier leading so wrapped CJK headings don't crowd.
                 .lineSpacing(MarkdownTypography.headingSize(level: level) * 0.32)
                 .padding(.top, headingTopPadding(level: level))
-                .padding(.bottom, level == 1 ? 12 : 8)
+                .padding(.bottom, headingBottomPadding(level: level))
 
         case .paragraph(_, let text):
             Text(text)
@@ -119,6 +148,32 @@ struct MarkdownBlockView: View {
             )
             .padding(.vertical, 10)
 
+        case .callout(_, let kind, let blocks):
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 6) {
+                    SwiftUI.Image(systemName: kind.systemImage)
+                        .font(.system(size: MarkdownTypography.bodySize - 2))
+                    Text(kind.label)
+                        .font(.system(size: MarkdownTypography.bodySize - 1.5, weight: .semibold))
+                }
+                .foregroundStyle(kind.tint)
+
+                VStack(alignment: .leading, spacing: 0) {
+                    ForEach(blocks) { child in
+                        MarkdownBlockView(block: child, palette: palette, nested: true)
+                    }
+                }
+            }
+            .padding(.vertical, 12)
+            .padding(.horizontal, 16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(kind.tint.opacity(0.10), in: RoundedRectangle(cornerRadius: 8))
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(kind.tint.opacity(0.30), lineWidth: 1)
+            )
+            .padding(.vertical, 10)
+
         case .list(_, let items, let ordered, let startIndex):
             VStack(alignment: .leading, spacing: 5) {
                 ForEach(Array(items.enumerated()), id: \.element.id) { offset, item in
@@ -153,12 +208,23 @@ struct MarkdownBlockView: View {
         }
     }
 
+    // Asymmetric heading spacing (top > bottom) pulls a heading toward
+    // the text it introduces — Resomark's rhythm.
     private func headingTopPadding(level: Int) -> CGFloat {
         switch level {
-        case 1: 10
-        case 2: 30
-        case 3: 22
-        default: 16
+        case 1: 24
+        case 2: 20
+        case 3: 16
+        default: 12
+        }
+    }
+
+    private func headingBottomPadding(level: Int) -> CGFloat {
+        switch level {
+        case 1: 12
+        case 2: 10
+        case 3: 8
+        default: 6
         }
     }
 

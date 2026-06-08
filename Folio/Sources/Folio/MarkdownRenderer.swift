@@ -6,13 +6,15 @@ import SwiftUI
 
 /// Flat block model produced from a swift-markdown `Document`,
 /// rendered by `MarkdownBlockView`.
-enum MarkdownBlock: Identifiable {
+enum MarkdownBlock: Identifiable, Equatable {
     case heading(id: Int, level: Int, text: AttributedString)
     case paragraph(id: Int, text: AttributedString)
     /// `code` is the raw text (for copy/export); `display` is the themed
     /// AttributedString actually rendered (find highlights apply to it).
     case codeBlock(id: Int, language: String?, code: String, display: AttributedString)
     case blockquote(id: Int, blocks: [MarkdownBlock])
+    /// GFM alert / admonition (`> [!NOTE]` …), rendered as a tinted card.
+    case callout(id: Int, kind: MarkdownCalloutKind, blocks: [MarkdownBlock])
     case list(id: Int, items: [MarkdownListItem], ordered: Bool, startIndex: Int)
     case table(id: Int, header: [AttributedString], rows: [[AttributedString]], alignments: [MarkdownTableAlignment])
     case thematicBreak(id: Int)
@@ -23,6 +25,7 @@ enum MarkdownBlock: Identifiable {
              .paragraph(let id, _),
              .codeBlock(let id, _, _, _),
              .blockquote(let id, _),
+             .callout(let id, _, _),
              .list(let id, _, _, _),
              .table(let id, _, _, _),
              .thematicBreak(let id):
@@ -31,13 +34,53 @@ enum MarkdownBlock: Identifiable {
     }
 }
 
-struct MarkdownListItem: Identifiable {
+/// GitHub-style alert kinds. Colors are fixed semantic hues that read on
+/// every theme; icons/labels mirror GitHub's rendering.
+enum MarkdownCalloutKind: String, CaseIterable {
+    case note, tip, important, warning, caution
+
+    static func parse(_ token: String) -> MarkdownCalloutKind? {
+        MarkdownCalloutKind(rawValue: token.lowercased())
+    }
+
+    var label: String {
+        switch self {
+        case .note: "Note"
+        case .tip: "Tip"
+        case .important: "Important"
+        case .warning: "Warning"
+        case .caution: "Caution"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .note: "info.circle.fill"
+        case .tip: "lightbulb.fill"
+        case .important: "exclamationmark.circle.fill"
+        case .warning: "exclamationmark.triangle.fill"
+        case .caution: "exclamationmark.octagon.fill"
+        }
+    }
+
+    var tint: Color {
+        switch self {
+        case .note: Color(hex: 0x3B82F6)
+        case .tip: Color(hex: 0x22C55E)
+        case .important: Color(hex: 0x8B5CF6)
+        case .warning: Color(hex: 0xF59E0B)
+        case .caution: Color(hex: 0xEF4444)
+        }
+    }
+}
+
+struct MarkdownListItem: Identifiable, Equatable {
     let id: Int
     let checkbox: Bool?  // nil = plain item, true/false = GFM task list state
     let blocks: [MarkdownBlock]
 }
 
-enum MarkdownTableAlignment {
+enum MarkdownTableAlignment: Equatable {
     case left, center, right
 
     var textAlignment: TextAlignment {
@@ -67,14 +110,17 @@ enum MarkdownTypography {
     /// Comfortable book measure: ~68 characters at body size.
     static let readingMeasure: CGFloat = 720
 
+    /// Even heading ratios off the body size (borrowed from Resomark):
+    /// 1.867 / 1.6 / 1.4 / 1.2 / 1.067. Scales with the body size.
     static func headingSize(level: Int) -> CGFloat {
-        switch level {
-        case 1: 30.5
-        case 2: 22.5
-        case 3: 18.5
-        case 4: 16.5
-        default: bodySize
+        let ratio: CGFloat = switch level {
+        case 1: 1.867
+        case 2: 1.6
+        case 3: 1.4
+        case 4: 1.2
+        default: 1.067
         }
+        return bodySize * ratio
     }
 
     static func headingWeight(level: Int) -> Font.Weight {
@@ -155,6 +201,11 @@ struct MarkdownRenderer {
             )
 
         case let quote as BlockQuote:
+            if let kind = calloutKind(of: quote) {
+                var blocks = renderBlocks(quote.blockChildren, counter: &counter)
+                stripCalloutMarker(from: &blocks)
+                return .callout(id: nextId(&counter), kind: kind, blocks: blocks)
+            }
             return .blockquote(
                 id: nextId(&counter),
                 blocks: renderBlocks(quote.blockChildren, counter: &counter)
@@ -218,6 +269,54 @@ struct MarkdownRenderer {
                 checkbox: checkbox,
                 blocks: renderBlocks(item.blockChildren, counter: &counter)
             )
+        }
+    }
+
+    /// Detects a leading `[!TYPE]` alert marker on a blockquote.
+    private func calloutKind(of quote: BlockQuote) -> MarkdownCalloutKind? {
+        guard let paragraph = quote.child(at: 0) as? Paragraph,
+              let token = leadingAlertToken(paragraph.plainText) else {
+            return nil
+        }
+        return MarkdownCalloutKind.parse(token)
+    }
+
+    /// Returns the TYPE in a leading `[!TYPE]` marker, else nil.
+    private func leadingAlertToken(_ text: String) -> String? {
+        var rest = Substring(text)
+        while let first = rest.first, first == " " || first == "\t" { rest = rest.dropFirst() }
+        guard rest.hasPrefix("[!"), let close = rest.firstIndex(of: "]") else {
+            return nil
+        }
+        let token = rest[rest.index(rest.startIndex, offsetBy: 2)..<close]
+        return token.allSatisfy(\.isLetter) && !token.isEmpty ? String(token) : nil
+    }
+
+    /// Removes the `[!TYPE]` marker (and any following whitespace) from the
+    /// first paragraph of an already-rendered callout body.
+    private func stripCalloutMarker(from blocks: inout [MarkdownBlock]) {
+        guard let index = blocks.firstIndex(where: { if case .paragraph = $0 { return true } else { return false } }),
+              case .paragraph(let id, var text) = blocks[index] else {
+            return
+        }
+
+        let plain = Array(String(text.characters))
+        var i = 0
+        while i < plain.count, plain[i] == " " || plain[i] == "\t" { i += 1 }
+        guard i + 1 < plain.count, plain[i] == "[", plain[i + 1] == "!" else { return }
+        guard let close = plain[i...].firstIndex(of: "]") else { return }
+        var dropCount = close + 1
+        while dropCount < plain.count, plain[dropCount] == " " || plain[dropCount] == "\t" || plain[dropCount] == "\n" {
+            dropCount += 1
+        }
+
+        let upper = text.index(text.startIndex, offsetByCharacters: dropCount)
+        text.removeSubrange(text.startIndex..<upper)
+
+        if text.characters.isEmpty {
+            blocks.remove(at: index)
+        } else {
+            blocks[index] = .paragraph(id: id, text: text)
         }
     }
 
