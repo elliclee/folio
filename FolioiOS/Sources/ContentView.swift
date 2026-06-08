@@ -7,7 +7,7 @@ struct ContentView: View {
     @State private var isImporting = false
 
     private var importedContentTypes: [UTType] {
-        var types: [UTType] = [.plainText]
+        var types: [UTType] = [.plainText, .html]
         if let markdown = UTType(filenameExtension: "md") { types.append(markdown) }
         if let markdownLong = UTType(filenameExtension: "markdown") { types.append(markdownLong) }
         return types
@@ -18,21 +18,30 @@ struct ContentView: View {
         let palette = viewModel.palette
 
         NavigationStack {
-            ScrollView {
-                LazyVStack(alignment: .leading, spacing: 0) {
-                    ForEach(viewModel.blocks) { block in
-                        MarkdownBlockView(block: block, palette: palette)
-                            .equatable()
+            Group {
+                if let html = viewModel.htmlDocument {
+                    // HTML genuinely needs a browser engine — the one
+                    // WebView in Folio. Markdown stays fully native below.
+                    HTMLWebView(html: html, baseURL: viewModel.htmlBaseURL)
+                        .ignoresSafeArea(edges: .bottom)
+                } else {
+                    ScrollView {
+                        LazyVStack(alignment: .leading, spacing: 0) {
+                            ForEach(viewModel.blocks) { block in
+                                MarkdownBlockView(block: block, palette: palette)
+                                    .equatable()
+                            }
+                        }
+                        .frame(maxWidth: MarkdownTypography.readingMeasure, alignment: .leading)
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 40)
+                        .padding(.top, 8)
+                        .frame(maxWidth: .infinity)
                     }
+                    .background(palette.preview)
+                    .textSelection(.enabled)
                 }
-                .frame(maxWidth: MarkdownTypography.readingMeasure, alignment: .leading)
-                .padding(.horizontal, 20)
-                .padding(.bottom, 40)
-                .padding(.top, 8)
-                .frame(maxWidth: .infinity)
             }
-            .background(palette.preview)
-            .textSelection(.enabled)
             .navigationTitle(viewModel.fileName ?? "Folio")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

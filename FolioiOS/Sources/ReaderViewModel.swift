@@ -18,12 +18,21 @@ final class ReaderViewModel {
     private(set) var blocks: [MarkdownBlock] = []
     private(set) var fileName: String?
 
+    /// Set when the open document is HTML — rendered in a WebView.
+    private(set) var htmlDocument: String?
+    private(set) var htmlBaseURL: URL?
+
     let recents = RecentDocumentsStore.shared
 
     var palette: ThemePalette { theme.palette }
 
     init() {
         rebuild()
+        // Dev hook (parity with macOS FOLIO_OPEN): open a file at launch.
+        if let path = ProcessInfo.processInfo.environment["FOLIO_OPEN"],
+           FileManager.default.fileExists(atPath: path) {
+            open(url: URL(fileURLWithPath: path))
+        }
     }
 
     private func rebuild() {
@@ -42,8 +51,15 @@ final class ReaderViewModel {
 
         do {
             let text = try String(contentsOf: url, encoding: .utf8)
-            markdown = text
             fileName = url.lastPathComponent
+            switch DocumentKind.from(path: url.path) {
+            case .html:
+                htmlDocument = text
+                htmlBaseURL = url.deletingLastPathComponent()
+            case .markdown:
+                htmlDocument = nil
+                markdown = text
+            }
             let bookmark = try? url.bookmarkData()
             recents.remember(name: url.lastPathComponent, path: url.path, bookmark: bookmark)
         } catch {
