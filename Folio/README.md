@@ -74,15 +74,15 @@ Milestone 5 — app bundle:
 - [x] `scripts/bundle.sh` builds `dist/Folio.app` (release build,
       Info.plist, ad-hoc codesign, Launch Services registration);
       `--dmg` also produces `dist/Folio.dmg`
-- [x] App icon reused from the Tauri bundle (`icon.icns`)
+- [x] Blueprint-style "F" app icon (`assets/Folio.icns`)
 - [x] md/markdown file associations: double-clicked files route to the
       key window via `application(_:open:)` + `OpenFileRouter` (the
       native counterpart of Tauri's `PendingOpenFiles` queue), with
       files queued when they arrive before the first window exists
 
-Note: the bundled app stores preferences under
-`com.ellic.folio.swift`, so pinned/recent folders from unbundled
-`swift run` sessions don't carry over.
+Note: the bundled app stores preferences under `com.ellic.folio`,
+while unbundled `swift run` uses the `Folio` defaults domain — so
+pinned/recent folders don't carry over between the two.
 
 Planned next: open-in-terminal toolbar action; proper Developer ID
 signing/notarization when distributing outside this machine.
@@ -112,6 +112,36 @@ FOLIO_EXPORT_PDF=/tmp/doc.pdf swift run # headless print-render to PDF
 `FOLIO_OPEN` is an env var instead of an argv path on purpose:
 AppKit treats a path argument as an open-document (odoc) event and then
 suppresses the default WindowGroup window.
+
+## Releasing
+
+**Automated (preferred):** push a `v*` tag — the
+[`folio-release`](../.github/workflows/folio-release.yml) workflow builds
+and tests on a macOS runner, bundles `Folio.app` + `.dmg`, and publishes a
+GitHub Release (the tag stamps the bundle version via `FOLIO_VERSION`).
+
+```sh
+git tag v0.5.1 && git push origin v0.5.1
+```
+
+**Manual (no CI / billing locked):** build the dmg and publish it with the
+`gh` CLI — releases don't go through Actions, so this works regardless of
+Actions billing.
+
+```sh
+VERSION=0.5.1
+FOLIO_VERSION=$VERSION ./scripts/bundle.sh --dmg
+cp dist/Folio.dmg ~/Desktop/Folio-$VERSION.dmg
+
+git tag v$VERSION && git push origin v$VERSION   # if not already tagged
+gh release create v$VERSION \
+  "dist/Folio.dmg#Folio-$VERSION.dmg (macOS)" \
+  --repo elliclee/folio --title "Folio $VERSION" --generate-notes
+```
+
+The app is ad-hoc signed (not notarized): on first launch users right-click
+→ **Open**, or allow it under System Settings → Privacy & Security. Proper
+Developer ID signing + notarization is a future step.
 
 ## Layout
 
