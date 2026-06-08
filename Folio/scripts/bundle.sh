@@ -93,6 +93,31 @@ if [[ "${1:-}" == "--dmg" ]]; then
     STAGING=$(mktemp -d)
     cp -R "$APP" "$STAGING/"
     ln -s /Applications "$STAGING/Applications"
+
+    # First-launch note: the app is ad-hoc signed (not notarized), so
+    # Gatekeeper quarantines it. The xattr command clears the quarantine.
+    cat > "$STAGING/Readme.rtf" <<'RTF'
+{\rtf1\ansi\ansicpg1252\cocoartf2639
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica-Bold;\f1\fswiss\fcharset0 Helvetica;\f2\fmodern\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;\red20\green20\blue20;\red120\green120\blue120;}
+\margl1440\margr1440\vieww11000\viewh9000\viewkind0
+\pard\sa280\qc\f0\fs36\cf2 Folio\
+
+\pard\sa200\f1\fs26\cf2 Folio is ad-hoc signed (not yet notarized), so macOS quarantines it on first download.\
+
+\pard\sa120\f0\fs26\cf2 To open it:\
+
+\pard\sa120\f1\fs26\cf2 1. Drag\b  Folio\b0  onto the\b  Applications\b0  folder.\
+2. Open\b  Terminal\b0  and run:\
+
+\pard\sa200\f2\fs24\cf2 xattr -dr com.apple.quarantine "/Applications/Folio.app"\
+
+\pard\sa200\f1\fs26\cf2 3. Launch Folio normally.\
+
+\pard\sa0\f1\fs22\cf3 You only need to do this once. Alternatively, right-click Folio and choose Open, then confirm.\
+}
+RTF
+
     hdiutil create -volname "$APP_NAME" -srcfolder "$STAGING" -ov -format UDZO "$DIST/$APP_NAME.dmg"
     rm -rf "$STAGING"
 fi
