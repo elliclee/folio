@@ -5,6 +5,7 @@ import FolioCore
 struct ContentView: View {
     @Environment(ReaderViewModel.self) private var viewModel
     @State private var isImporting = false
+    @State private var isOutlineOpen = false
 
     private func documentIcon(_ name: String) -> String {
         switch (name as NSString).pathExtension.lowercased() {
@@ -45,21 +46,35 @@ struct ContentView: View {
                     HTMLWebView(html: html, baseURL: viewModel.htmlBaseURL)
                         .ignoresSafeArea(edges: .bottom)
                 } else {
-                    ScrollView {
-                        LazyVStack(alignment: .leading, spacing: 0) {
-                            ForEach(viewModel.blocks) { block in
-                                MarkdownBlockView(block: block, palette: palette)
+                    ScrollViewReader { proxy in
+                        ScrollView {
+                            LazyVStack(alignment: .leading, spacing: 0) {
+                                ForEach(viewModel.blocks) { block in
+                                    MarkdownBlockView(
+                                        block: block,
+                                        palette: palette,
+                                        baseURL: viewModel.documentBaseURL
+                                    )
                                     .equatable()
+                                    .id(block.id)
+                                }
+                            }
+                            .frame(maxWidth: MarkdownTypography.readingMeasure, alignment: .leading)
+                            .padding(.horizontal, 20)
+                            .padding(.bottom, 40)
+                            .padding(.top, 8)
+                            .frame(maxWidth: .infinity)
+                        }
+                        .background(palette.preview)
+                        .textSelection(.enabled)
+                        .onChange(of: viewModel.scrollRequest) { _, req in
+                            if let req {
+                                withAnimation(.easeOut(duration: 0.2)) {
+                                    proxy.scrollTo(req.blockID, anchor: .top)
+                                }
                             }
                         }
-                        .frame(maxWidth: MarkdownTypography.readingMeasure, alignment: .leading)
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 40)
-                        .padding(.top, 8)
-                        .frame(maxWidth: .infinity)
                     }
-                    .background(palette.preview)
-                    .textSelection(.enabled)
                 }
             }
             .navigationTitle(viewModel.fileName ?? "Folio")
@@ -98,6 +113,14 @@ struct ContentView: View {
                     .disabled(viewModel.recents.documents.isEmpty)
                 }
                 ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        isOutlineOpen = true
+                    } label: {
+                        Image(systemName: "text.book.closed")
+                    }
+                    .disabled(viewModel.outline.isEmpty)
+                }
+                ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Picker("Theme", selection: $viewModel.theme) {
                             ForEach(AppTheme.allCases) { theme in
@@ -112,6 +135,10 @@ struct ContentView: View {
         }
         .tint(palette.accent)
         .preferredColorScheme(viewModel.theme.colorScheme)
+        .sheet(isPresented: $isOutlineOpen) {
+            IOSOutlineSheet(outline: viewModel.outline, isPresented: $isOutlineOpen)
+                .environment(viewModel)
+        }
         .sheet(isPresented: $isImporting) {
             DocumentPicker(contentTypes: importedContentTypes) { url in
                 viewModel.open(url: url)
@@ -123,5 +150,50 @@ struct ContentView: View {
         } message: {
             Text(viewModel.errorMessage ?? "")
         }
+    }
+}
+
+/// Document outline sheet for iOS. Tapping a heading scrolls the reader
+/// to that block and dismisses the sheet.
+private struct IOSOutlineSheet: View {
+    @Environment(ReaderViewModel.self) private var viewModel
+    let outline: [OutlineItem]
+    @Binding var isPresented: Bool
+
+    var body: some View {
+        NavigationStack {
+            List(outline) { item in
+                Button {
+                    viewModel.requestScroll(to: item.id)
+                    isPresented = false
+                } label: {
+                    HStack(spacing: 0) {
+                        Color.clear.frame(width: CGFloat(item.level - 1) * 16)
+                        if item.level == 1 {
+                            Rectangle()
+                                .fill(Color.accentColor.opacity(0.5))
+                                .frame(width: 2, height: 16)
+                                .padding(.trailing, 10)
+                        }
+                        Text(item.title)
+                            .font(.system(size: item.level == 1 ? 15 : 14))
+                            .fontWeight(item.level == 1 ? .semibold : .regular)
+                            .foregroundStyle(item.level == 1 ? .primary : .secondary)
+                            .lineLimit(2)
+                    }
+                }
+                .listRowBackground(Color.clear)
+            }
+            .listStyle(.plain)
+            .navigationTitle("Contents")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") { isPresented = false }
+                }
+            }
+        }
+        .presentationDetents([.medium, .large])
+        .presentationDragIndicator(.visible)
     }
 }

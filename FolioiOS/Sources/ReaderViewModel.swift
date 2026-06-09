@@ -21,10 +21,23 @@ final class ReaderViewModel {
     /// Set when the open document is HTML — rendered in a WebView.
     private(set) var htmlDocument: String?
     private(set) var htmlBaseURL: URL?
+    /// Directory used to resolve relative image paths.
+    private(set) var documentBaseURL: URL?
 
     let recents = RecentDocumentsStore.shared
 
     var palette: ThemePalette { theme.palette }
+
+    var outline: [OutlineItem] { MarkdownOutline.from(blocks) }
+
+    struct ScrollRequest: Equatable { let blockID: Int; let token: Int }
+    private(set) var scrollRequest: ScrollRequest?
+    private var scrollToken = 0
+
+    func requestScroll(to blockID: Int) {
+        scrollToken += 1
+        scrollRequest = ScrollRequest(blockID: blockID, token: scrollToken)
+    }
 
     init() {
         rebuild()
@@ -80,10 +93,11 @@ final class ReaderViewModel {
         }
 
         fileName = url.lastPathComponent
+        documentBaseURL = url.deletingLastPathComponent()
         switch DocumentKind.from(path: url.path) {
         case .html:
             htmlDocument = text
-            htmlBaseURL = url.deletingLastPathComponent()
+            htmlBaseURL = documentBaseURL
         case .markdown:
             htmlDocument = nil
             markdown = text

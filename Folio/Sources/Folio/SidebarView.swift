@@ -31,6 +31,7 @@ struct SidebarView: View {
                         TreeNodeRow(node: node, depth: 0)
                     }
                 }
+
             }
             .padding(.horizontal, 8)
             .padding(.top, 6)

@@ -118,7 +118,7 @@ public enum FindHighlighter {
                     alignments: alignments
                 )
 
-            case .thematicBreak:
+            case .image, .thematicBreak:
                 return block
             }
         }

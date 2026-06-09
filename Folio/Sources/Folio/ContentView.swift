@@ -5,6 +5,7 @@ struct ContentView: View {
     @Environment(AppViewModel.self) private var viewModel
 
     @State private var columnVisibility: NavigationSplitViewVisibility = .all
+    @State private var isOutlineOpen = false
 
     var body: some View {
         @Bindable var viewModel = viewModel
@@ -29,6 +30,19 @@ struct ContentView: View {
         .navigationSubtitle(viewModel.isDirty ? "Edited" : "")
         .toolbar {
             ToolbarItemGroup {
+                let outline = viewModel.outline
+                Button {
+                    isOutlineOpen.toggle()
+                } label: {
+                    Label("Document Outline", systemImage: "text.book.closed")
+                }
+                .help("Document Outline")
+                .disabled(outline.isEmpty)
+                .popover(isPresented: $isOutlineOpen, arrowEdge: .bottom) {
+                    OutlinePopover(outline: outline, isPresented: $isOutlineOpen)
+                        .environment(viewModel)
+                }
+
                 Picker("View Mode", selection: $viewModel.viewMode) {
                     ForEach(ViewMode.allCases) { mode in
                         Label(mode.label, systemImage: mode.systemImage)
@@ -115,5 +129,68 @@ struct ContentView: View {
         .foregroundStyle(palette.textMuted)
         .padding(.horizontal, 20)
         .padding(.vertical, 6)
+    }
+}
+
+/// Popover showing the document outline. Clicking a heading scrolls the
+/// preview to it and dismisses the popover.
+private struct OutlinePopover: View {
+    @Environment(AppViewModel.self) private var viewModel
+    let outline: [OutlineItem]
+    @Binding var isPresented: Bool
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 1) {
+                ForEach(outline) { item in
+                    OutlinePopoverRow(item: item) {
+                        viewModel.requestScroll(to: item.id)
+                        isPresented = false
+                    }
+                }
+            }
+            .padding(.vertical, 6)
+            .padding(.horizontal, 6)
+        }
+        .frame(minWidth: 240, idealWidth: 280, maxWidth: 360,
+               minHeight: 80, maxHeight: 420)
+    }
+}
+
+private struct OutlinePopoverRow: View {
+    let item: OutlineItem
+    let action: () -> Void
+    @State private var isHovered = false
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 0) {
+                // Subtle left-border accent for h1
+                if item.level == 1 {
+                    RoundedRectangle(cornerRadius: 1)
+                        .fill(Color.accentColor.opacity(0.5))
+                        .frame(width: 2, height: 14)
+                        .padding(.trailing, 8)
+                } else {
+                    Color.clear.frame(width: CGFloat(item.level - 1) * 14)
+                }
+                Text(item.title)
+                    .font(.system(size: item.level == 1 ? 13 : 12))
+                    .fontWeight(item.level == 1 ? .semibold : .regular)
+                    .foregroundStyle(item.level == 1 ? .primary : .secondary)
+                    .lineLimit(2)
+                    .truncationMode(.tail)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .contentShape(Rectangle())
+            .background(
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(isHovered ? Color.primary.opacity(0.07) : Color.clear)
+            )
+        }
+        .buttonStyle(.plain)
+        .onHover { isHovered = $0 }
     }
 }

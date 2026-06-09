@@ -8,16 +8,20 @@ public struct MarkdownBlockView: View, Equatable {
     public let block: MarkdownBlock
     public let palette: ThemePalette
     public var nested = false
+    /// Resolves relative image sources (the document's directory).
+    public var baseURL: URL?
 
-    public init(block: MarkdownBlock, palette: ThemePalette, nested: Bool = false) {
+    public init(block: MarkdownBlock, palette: ThemePalette, nested: Bool = false, baseURL: URL? = nil) {
         self.block = block
         self.palette = palette
         self.nested = nested
+        self.baseURL = baseURL
     }
 
     public static func == (lhs: MarkdownBlockView, rhs: MarkdownBlockView) -> Bool {
         lhs.nested == rhs.nested
             && lhs.palette == rhs.palette
+            && lhs.baseURL == rhs.baseURL
             && lhs.block == rhs.block
     }
 
@@ -69,7 +73,7 @@ public struct MarkdownBlockView: View, Equatable {
                     .frame(width: 2.5)
                 VStack(alignment: .leading, spacing: 0) {
                     ForEach(blocks) { child in
-                        MarkdownBlockView(block: child, palette: palette, nested: true)
+                        MarkdownBlockView(block: child, palette: palette, nested: true, baseURL: baseURL)
                     }
                 }
                 .padding(.leading, 16)
@@ -96,7 +100,7 @@ public struct MarkdownBlockView: View, Equatable {
 
                 VStack(alignment: .leading, spacing: 0) {
                     ForEach(blocks) { child in
-                        MarkdownBlockView(block: child, palette: palette, nested: true)
+                        MarkdownBlockView(block: child, palette: palette, nested: true, baseURL: baseURL)
                     }
                 }
             }
@@ -117,7 +121,7 @@ public struct MarkdownBlockView: View, Equatable {
                         listMarker(item: item, ordered: ordered, index: startIndex + offset)
                         VStack(alignment: .leading, spacing: 0) {
                             ForEach(item.blocks) { child in
-                                MarkdownBlockView(block: child, palette: palette, nested: true)
+                                MarkdownBlockView(block: child, palette: palette, nested: true, baseURL: baseURL)
                             }
                         }
                     }
@@ -129,6 +133,10 @@ public struct MarkdownBlockView: View, Equatable {
         case .table(_, let header, let rows, let alignments):
             MarkdownTableView(header: header, rows: rows, alignments: alignments, palette: palette)
                 .padding(.vertical, 8)
+
+        case .image(_, let source, let alt):
+            MarkdownImageView(source: source, alt: alt, baseURL: baseURL, palette: palette)
+                .padding(.vertical, 10)
 
         case .thematicBreak:
             // Editorial asterism instead of a full-width rule.

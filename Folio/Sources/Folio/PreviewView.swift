@@ -14,7 +14,10 @@ struct PreviewView: View {
         return PreviewScrollView(
             blocks: findResult?.blocks ?? viewModel.renderedBlocks,
             palette: viewModel.palette,
+            baseURL: viewModel.documentBaseURL,
             currentMatchBlockId: findResult?.currentMatchBlockId,
+            outlineScrollBlockID: viewModel.scrollRequest?.blockID,
+            scrollToken: viewModel.scrollRequest?.token ?? 0,
             coordinator: viewModel.scrollCoordinator
         )
     }
@@ -26,7 +29,12 @@ struct PreviewView: View {
 private struct PreviewScrollView: View {
     let blocks: [MarkdownBlock]
     let palette: ThemePalette
+    let baseURL: URL?
     let currentMatchBlockId: Int?
+    /// Block to scroll to when the user taps an outline item.
+    let outlineScrollBlockID: Int?
+    /// Increments on each outline tap so the same heading re-scrolls.
+    let scrollToken: Int
     let coordinator: PaneScrollCoordinator
 
     @State private var scrollPosition = ScrollPosition()
@@ -35,7 +43,7 @@ private struct PreviewScrollView: View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 0) {
                 ForEach(blocks) { block in
-                    MarkdownBlockView(block: block, palette: palette)
+                    MarkdownBlockView(block: block, palette: palette, baseURL: baseURL)
                         .equatable()
                 }
             }
@@ -67,6 +75,13 @@ private struct PreviewScrollView: View {
             if let blockId {
                 withAnimation(.easeOut(duration: 0.15)) {
                     scrollPosition.scrollTo(id: blockId, anchor: .center)
+                }
+            }
+        }
+        .onChange(of: scrollToken) { _, _ in
+            if let blockId = outlineScrollBlockID {
+                withAnimation(.easeOut(duration: 0.15)) {
+                    scrollPosition.scrollTo(id: blockId, anchor: .top)
                 }
             }
         }

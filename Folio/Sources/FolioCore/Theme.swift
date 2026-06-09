@@ -4,27 +4,27 @@ import SwiftUI
 /// Token names mirror the CSS custom properties so the two
 /// implementations stay easy to diff.
 public enum AppTheme: String, CaseIterable, Identifiable {
-    case vercel
-    case claude
-    case claudeDark = "claude-dark"
-    case lovable
-    case spotify
+    case daylight
+    case manuscript
+    case nocturne
+    case linen
+    case evergreen
     case dark
-    case highContrast = "hc"
+    case highContrast = "darknight"
 
-    public static let `default`: AppTheme = .vercel
+    public static let `default`: AppTheme = .daylight
 
     public var id: String { rawValue }
 
     public var label: String {
         switch self {
-        case .claude: "Claude"
-        case .claudeDark: "Claude Dark"
-        case .lovable: "Lovable"
-        case .vercel: "Vercel"
-        case .spotify: "Spotify"
+        case .daylight: "Daylight"
+        case .manuscript: "Manuscript"
+        case .nocturne: "Nocturne"
+        case .linen: "Linen"
+        case .evergreen: "Evergreen"
         case .dark: "Dark"
-        case .highContrast: "High Contrast"
+        case .highContrast: "Darknight"
         }
     }
 
@@ -33,7 +33,7 @@ public enum AppTheme: String, CaseIterable, Identifiable {
     /// keep tight sans headings.
     public var headingDesign: Font.Design {
         switch self {
-        case .claude, .claudeDark, .lovable: .serif
+        case .manuscript, .nocturne, .linen: .serif
         default: .default
         }
     }
@@ -41,7 +41,7 @@ public enum AppTheme: String, CaseIterable, Identifiable {
     /// Matches `getThemeColorScheme` in theme-class.ts.
     public var colorScheme: ColorScheme {
         switch self {
-        case .dark, .highContrast, .claudeDark, .spotify: .dark
+        case .dark, .highContrast, .nocturne, .evergreen: .dark
         default: .light
         }
     }
@@ -50,11 +50,11 @@ public enum AppTheme: String, CaseIterable, Identifiable {
         switch self {
         case .dark: .dark
         case .highContrast: .highContrast
-        case .claude: .claude
-        case .claudeDark: .claudeDark
-        case .vercel: .vercel
-        case .lovable: .lovable
-        case .spotify: .spotify
+        case .manuscript: .manuscript
+        case .nocturne: .nocturne
+        case .daylight: .daylight
+        case .linen: .linen
+        case .evergreen: .evergreen
         }
     }
 }
@@ -124,7 +124,7 @@ public struct ThemePalette: Equatable {
         inlineCodeBorder: Color(hex: 0xFFFFFF)
     )
 
-    public static let claude = ThemePalette(
+    public static let manuscript = ThemePalette(
         window: Color(hex: 0xF5F4ED),
         editor: Color(hex: 0xFAF9F5),
         preview: Color(hex: 0xFAF9F5),
@@ -146,7 +146,7 @@ public struct ThemePalette: Equatable {
         inlineCodeBorder: Color(hex: 0xD1CFC5)
     )
 
-    public static let claudeDark = ThemePalette(
+    public static let nocturne = ThemePalette(
         window: Color(hex: 0x1A1512),
         editor: Color(hex: 0x211B18),
         preview: Color(hex: 0x211B18),
@@ -168,7 +168,7 @@ public struct ThemePalette: Equatable {
         inlineCodeBorder: Color(hex: 0x4D3830)
     )
 
-    public static let vercel = ThemePalette(
+    public static let daylight = ThemePalette(
         window: Color(hex: 0xFFFFFF),
         editor: Color(hex: 0xFFFFFF),
         preview: Color(hex: 0xFFFFFF),
@@ -190,7 +190,7 @@ public struct ThemePalette: Equatable {
         inlineCodeBorder: Color(hex: 0xEBEBEB)
     )
 
-    public static let lovable = ThemePalette(
+    public static let linen = ThemePalette(
         window: Color(hex: 0xF7F4ED),
         editor: Color(hex: 0xFCFBF8),
         preview: Color(hex: 0xFCFBF8),
@@ -212,7 +212,7 @@ public struct ThemePalette: Equatable {
         inlineCodeBorder: Color(hex: 0x1C1C1C, alpha: 0.12)
     )
 
-    public static let spotify = ThemePalette(
+    public static let evergreen = ThemePalette(
         window: Color(hex: 0x121212),
         editor: Color(hex: 0x181818),
         preview: Color(hex: 0x181818),

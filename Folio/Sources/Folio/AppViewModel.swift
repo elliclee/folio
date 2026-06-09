@@ -61,6 +61,25 @@ final class AppViewModel {
     let workspaceFolders: WorkspaceFoldersStore
     let recentDocuments: RecentDocumentsStore
 
+    /// Document outline (headings) for the navigator.
+    var outline: [OutlineItem] { MarkdownOutline.from(renderedBlocks) }
+
+    /// Directory used to resolve relative image paths in the preview.
+    var documentBaseURL: URL? {
+        activeFile.map { URL(fileURLWithPath: $0.path).deletingLastPathComponent() }
+    }
+
+    /// A tap-to-scroll request; the token makes repeated taps on the same
+    /// heading distinct so the preview re-scrolls.
+    struct ScrollRequest: Equatable { let blockID: Int; let token: Int }
+    private(set) var scrollRequest: ScrollRequest?
+    private var scrollToken = 0
+
+    func requestScroll(to blockID: Int) {
+        scrollToken += 1
+        scrollRequest = ScrollRequest(blockID: blockID, token: scrollToken)
+    }
+
     /// FOLIO_* env seeds apply once, to the first window only.
     private static var didApplyEnvironmentSeeds = false
 

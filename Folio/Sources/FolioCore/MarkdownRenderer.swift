@@ -17,6 +17,9 @@ public enum MarkdownBlock: Identifiable, Equatable {
     case callout(id: Int, kind: MarkdownCalloutKind, blocks: [MarkdownBlock])
     case list(id: Int, items: [MarkdownListItem], ordered: Bool, startIndex: Int)
     case table(id: Int, header: [AttributedString], rows: [[AttributedString]], alignments: [MarkdownTableAlignment])
+    /// A standalone image (`![alt](src)` on its own line). `source` is the
+    /// raw markdown URL; views resolve it (remote or relative-to-baseURL).
+    case image(id: Int, source: String, alt: String)
     case thematicBreak(id: Int)
 
     public var id: Int {
@@ -28,6 +31,7 @@ public enum MarkdownBlock: Identifiable, Equatable {
              .callout(let id, _, _),
              .list(let id, _, _, _),
              .table(let id, _, _, _),
+             .image(let id, _, _),
              .thematicBreak(let id):
             return id
         }
@@ -178,6 +182,15 @@ public struct MarkdownRenderer {
             )
 
         case let paragraph as Paragraph:
+            // A paragraph that is just an image renders as a real image
+            // block; mixed text keeps inline images as alt-text fallback.
+            if let image = soleImage(in: paragraph) {
+                return .image(
+                    id: nextId(&counter),
+                    source: image.source ?? "",
+                    alt: image.plainText
+                )
+            }
             return .paragraph(
                 id: nextId(&counter),
                 text: renderInline(paragraph.inlineChildren, baseSize: MarkdownTypography.bodySize)
@@ -275,6 +288,27 @@ public struct MarkdownRenderer {
                 blocks: renderBlocks(item.blockChildren, counter: &counter)
             )
         }
+    }
+
+    /// Returns the image if a paragraph contains exactly one image and no
+    /// meaningful text (so `![alt](src)` on its own line becomes a real
+    /// image block).
+    private func soleImage(in paragraph: Paragraph) -> Markdown.Image? {
+        var image: Markdown.Image?
+        for child in paragraph.inlineChildren {
+            switch child {
+            case let img as Markdown.Image:
+                if image != nil { return nil }  // more than one image
+                image = img
+            case let text as Markdown.Text:
+                if !text.string.trimmingCharacters(in: .whitespaces).isEmpty { return nil }
+            case is SoftBreak, is LineBreak:
+                continue
+            default:
+                return nil  // any other inline (links, emphasis, …) → not sole
+            }
+        }
+        return image
     }
 
     /// Detects a leading `[!TYPE]` alert marker on a blockquote.
