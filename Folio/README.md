@@ -118,12 +118,11 @@ suppresses the default WindowGroup window.
 The version lives in one place — the `VERSION` file. `bundle.sh` reads it
 (an explicit `FOLIO_VERSION` env, e.g. a CI tag, overrides it).
 
-Releases are cut **locally**, never by Actions. `bundle.sh` signs with a
-Developer ID certificate and notarizes through the App Store Connect API,
-and a GitHub runner has neither — it would silently fall back to an ad-hoc
-signature and publish a build macOS quarantines. The
-[`folio-release`](../.github/workflows/folio-release.yml) workflow therefore
-only builds and tests.
+Releases are cut **locally**. There is deliberately no CI workflow:
+`bundle.sh` signs with a Developer ID certificate and notarizes through the
+App Store Connect API, and a GitHub runner has neither, so it would silently
+fall back to an ad-hoc signature and publish a build macOS quarantines. Run
+`swift test` as part of the steps below — nothing else will run it for you.
 
 ```sh
 echo 0.5.2 > VERSION
