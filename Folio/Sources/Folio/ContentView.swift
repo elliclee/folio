@@ -24,6 +24,13 @@ struct ContentView: View {
                 main(palette: palette)
             }
             .background(palette.window)
+            .overlay(alignment: .bottom) {
+                if let message = viewModel.copyConfirmation {
+                    toast(message, palette: palette)
+                }
+            }
+            .animation(.spring(response: 0.3, dampingFraction: 0.85),
+                       value: viewModel.copyConfirmation)
         }
         .preferredColorScheme(viewModel.theme.colorScheme)
         .navigationTitle(viewModel.activeFile?.name ?? "Folio")
@@ -52,11 +59,23 @@ struct ContentView: View {
                 .pickerStyle(.segmented)
                 .help("Preview or Split editing")
 
-                Picker("Theme", selection: $viewModel.theme) {
-                    ForEach(AppTheme.allCases) { theme in
-                        Text(theme.label).tag(theme)
+                // The toolbar suppresses item titles — which is why the
+                // buttons around this one show icons only — so a plain
+                // `Picker` here renders as a popup button with no text at
+                // all: accessibility reports the right selection, but
+                // nothing is drawn. Driving the menu by hand and forcing
+                // the label style keeps the theme name visible.
+                Menu {
+                    Picker("Theme", selection: $viewModel.theme) {
+                        ForEach(AppTheme.allCases) { theme in
+                            Text(theme.label).tag(theme)
+                        }
                     }
+                    .pickerStyle(.inline)
+                } label: {
+                    Label(viewModel.theme.label, systemImage: "paintpalette")
                 }
+                .labelStyle(.titleAndIcon)
                 .help("Reading theme")
 
                 Button {
@@ -65,6 +84,14 @@ struct ContentView: View {
                     Label("Find", systemImage: "magnifyingglass")
                 }
                 .help("Find in Document (⌘F)")
+
+                Button {
+                    viewModel.copyMarkdown()
+                } label: {
+                    Label("Copy Markdown", systemImage: "doc.on.doc")
+                }
+                .disabled(viewModel.markdown.isEmpty)
+                .help("Copy Markdown (⇧⌘C)")
 
                 Button {
                     viewModel.save()
@@ -115,6 +142,20 @@ struct ContentView: View {
             }
             .frame(minWidth: 320, maxWidth: .infinity)
         }
+    }
+
+    /// Brief confirmation for actions with no visible result of their own.
+    private func toast(_ message: String, palette: ThemePalette) -> some View {
+        Label(message, systemImage: "checkmark.circle.fill")
+            .font(.system(size: 13, weight: .medium))
+            .foregroundStyle(palette.textPrimary)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background(.regularMaterial, in: Capsule())
+            .overlay(Capsule().stroke(palette.border))
+            .shadow(color: .black.opacity(0.16), radius: 12, y: 4)
+            .padding(.bottom, 28)
+            .transition(.move(edge: .bottom).combined(with: .opacity))
     }
 
     private func paneHeader(icon: String, title: String, palette: ThemePalette) -> some View {

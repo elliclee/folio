@@ -19,9 +19,9 @@ Folio は現行アプリで、macOS 専用です。最初のクロスプラッ�
 
 ![Folio 分割エディタとプレビュー](docs/screenshots/folio-split.png)
 
-| Claude Dark テーマ | ドキュメント内検索 |
+| Dark テーマ | ドキュメント内検索 |
 | --- | --- |
-| ![Claude Dark テーマ](docs/screenshots/folio-dark.png) | ![ドキュメント内検索](docs/screenshots/folio-find.png) |
+| ![Dark テーマ](docs/screenshots/folio-dark.png) | ![ドキュメント内検索](docs/screenshots/folio-find.png) |
 
 ## 機能
 
@@ -36,8 +36,10 @@ Folio は現行アプリで、macOS 専用です。最初のクロスプラッ�
 - ネイティブの印刷パイプラインによる印刷・PDF 書き出し（⌘P）。
 - 複数のワークスペースウィンドウ。各ウィンドウが独自の文書とテーマを持つ。
 - Finder から `.md`/`.markdown` ファイルを直接開く（ファイル関連付け）。
-- 複数の読書テーマ——Vercel（既定）、Claude、Claude Dark、Lovable、Spotify、
-  Dark、High Contrast。暖色系の編集向けテーマは見出しにセリフ体を使用。
+- ドキュメント全体の Markdown ソースをワンクリックでクリップボードへコピー
+  （⇧⌘C）。コピー完了の通知を画面に表示。
+- 複数の読書テーマ——Daylight（既定）、Manuscript、Nocturne、Linen、Evergreen、
+  Dark、Darknight。暖色系の編集向けテーマは見出しにセリフ体を使用。
 - ウィンドウの位置とサイズは再起動後も復元。
 
 ## 動作要件

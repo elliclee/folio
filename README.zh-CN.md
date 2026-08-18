@@ -18,9 +18,9 @@ Folio 是当前主力应用，仅支持 macOS。最初的跨平台实现（一�
 
 ![Folio 分栏编辑与预览](docs/screenshots/folio-split.png)
 
-| Claude Dark 主题 | 文档内查找 |
+| Dark 主题 | 文档内查找 |
 | --- | --- |
-| ![Claude Dark 主题](docs/screenshots/folio-dark.png) | ![文档内查找](docs/screenshots/folio-find.png) |
+| ![Dark 主题](docs/screenshots/folio-dark.png) | ![文档内查找](docs/screenshots/folio-find.png) |
 
 ## 功能
 
@@ -34,8 +34,9 @@ Folio 是当前主力应用，仅支持 macOS。最初的跨平台实现（一�
 - 通过原生打印管线打印或导出 PDF（⌘P）。
 - 多个工作区窗口，每个窗口拥有独立的文档与主题。
 - 从访达直接打开 `.md`/`.markdown` 文件（文件关联）。
-- 多套阅读主题——Vercel（默认）、Claude、Claude Dark、Lovable、Spotify、
-  Dark、High Contrast。暖色编辑向主题的标题使用衬线字体。
+- 一键复制整篇文档的 Markdown 源码到剪贴板（⇧⌘C），并弹出复制成功提示。
+- 多套阅读主题——Daylight（默认）、Manuscript、Nocturne、Linen、Evergreen、
+  Dark、Darknight。暖色编辑向主题的标题使用衬线字体。
 - 窗口位置与大小在重启后自动恢复。
 
 ## 环境要求

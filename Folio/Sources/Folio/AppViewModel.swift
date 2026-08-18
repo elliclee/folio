@@ -50,6 +50,10 @@ final class AppViewModel {
     /// Rendered once per markdown/theme change, shared by preview + find.
     private(set) var renderedBlocks: [MarkdownBlock] = []
 
+    /// Transient confirmation for the toolbar copy action; nil hides the toast.
+    private(set) var copyConfirmation: String?
+    private var copyConfirmationTask: Task<Void, Never>?
+
     // Find state (mirrors App.tsx find handling).
     var isFindOpen = false
     var findQuery = "" {
@@ -235,6 +239,29 @@ final class AppViewModel {
             fileName: activeFile?.name,
             window: NSApp.keyWindow
         )
+    }
+
+    // MARK: - Clipboard
+
+    /// Copies the document's Markdown source — what the editor holds, not the
+    /// rendered text — and flashes a confirmation, since the clipboard gives
+    /// no feedback of its own.
+    func copyMarkdown() {
+        guard !markdown.isEmpty else {
+            return
+        }
+
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString(markdown, forType: .string)
+
+        copyConfirmationTask?.cancel()
+        copyConfirmation = "Markdown copied"
+        copyConfirmationTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(2))
+            guard !Task.isCancelled else { return }
+            self?.copyConfirmation = nil
+        }
     }
 
     // MARK: - Saving
@@ -451,6 +478,7 @@ enum DefaultMarkdown {
     - Pick a reading theme from the toolbar
     - Switch to Split view to edit, **⌘S** saves
     - Find in the document with **⌘F**
+    - Copy this document's Markdown with **⇧⌘C**
 
     ## Markdown Support
 
@@ -474,6 +502,7 @@ enum DefaultMarkdown {
     | Native rendering | ✅ |
     | Reading themes | ✅ |
     | Split editing | ✅ |
+    | Copy to clipboard | ✅ |
 
     ---
 

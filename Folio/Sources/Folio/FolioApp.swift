@@ -196,6 +196,12 @@ struct AppCommands: Commands {
         // Mirrors the Edit > Find menu item in the Tauri version.
         CommandGroup(after: .pasteboard) {
             Divider()
+            Button("Copy Markdown") {
+                viewModel?.copyMarkdown()
+            }
+            .keyboardShortcut("c", modifiers: [.command, .shift])
+            .disabled(viewModel == nil)
+
             Button("Find") {
                 viewModel?.openFind()
             }

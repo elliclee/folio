@@ -19,9 +19,9 @@ repository under [`Previewer.md/`](#previous-version-previewermd-tauri).
 
 ![Folio split editor and preview](docs/screenshots/folio-split.png)
 
-| Claude Dark theme | Find in document |
+| Dark theme | Find in document |
 | --- | --- |
-| ![Claude Dark theme](docs/screenshots/folio-dark.png) | ![Find in document](docs/screenshots/folio-find.png) |
+| ![Dark theme](docs/screenshots/folio-dark.png) | ![Find in document](docs/screenshots/folio-find.png) |
 
 ## Features
 
@@ -35,9 +35,11 @@ repository under [`Previewer.md/`](#previous-version-previewermd-tauri).
 - Print or export to PDF through the native print pipeline (⌘P).
 - Multiple workspace windows, each with its own document and theme.
 - Open `.md`/`.markdown` files directly from Finder (file associations).
-- Choose from several reading themes — Vercel (default), Claude, Claude Dark,
-  Lovable, Spotify, Dark, and High Contrast. Warm editorial themes set their
-  headings in a serif face.
+- Copy the whole document's Markdown source to the clipboard in one click
+  (⇧⌘C), with an on-screen confirmation.
+- Choose from several reading themes — Daylight (default), Manuscript,
+  Nocturne, Linen, Evergreen, Dark, and Darknight. Warm editorial themes set
+  their headings in a serif face.
 - Window position and size are restored across launches.
 
 ## Requirements

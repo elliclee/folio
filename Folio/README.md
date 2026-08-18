@@ -16,14 +16,14 @@ Milestone 1 — core reading experience:
 - [x] GFM rendering: headings, emphasis, inline/fenced code, blockquotes,
       lists, task lists, tables (with column alignment), strikethrough,
       links, thematic breaks
-- [x] Reading themes ported from `index.css`, Vercel as the default
-      (Vercel / Claude / Claude Dark / Lovable / Spotify / Dark /
-      High Contrast — the separate Light theme was dropped)
+- [x] Reading themes ported from `index.css`, Daylight as the default
+      (Daylight / Manuscript / Nocturne / Linen / Evergreen / Dark /
+      Darknight — the separate Light theme was dropped)
 
 Milestone 2 — editing & find (native components first):
 
 - [x] Native unified toolbar (sidebar toggle, Preview/Split segmented
-      control, theme picker, find, save) + window title shows the file
+      control, theme menu, find, copy, save) + window title shows the file
 - [x] Split editing with a real AppKit `NSTextView` (undo, IME, selection)
 - [x] Dirty detection + ⌘S save + native `NSAlert` discard confirmation
       (same rules as `editor-state.ts`)
