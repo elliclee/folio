@@ -118,25 +118,22 @@ suppresses the default WindowGroup window.
 The version lives in one place — the `VERSION` file. `bundle.sh` reads it
 (an explicit `FOLIO_VERSION` env, e.g. a CI tag, overrides it).
 
-**Automated (preferred):** push a `v*` tag — the
-[`folio-release`](../.github/workflows/folio-release.yml) workflow builds
-and tests on a macOS runner, bundles `Folio.app` + `.dmg`, and publishes a
-GitHub Release (the tag stamps the bundle version via `FOLIO_VERSION`).
-
-```sh
-echo 0.5.2 > VERSION && git commit -am "Bump Folio to 0.5.2"
-git tag v0.5.2 && git push origin main v0.5.2
-```
-
-**Manual (no CI / billing locked):** bump `VERSION`, build the dmg, and
-publish it with the `gh` CLI — releases don't go through Actions, so this
-works regardless of Actions billing.
+Releases are cut **locally**, never by Actions. `bundle.sh` signs with a
+Developer ID certificate and notarizes through the App Store Connect API,
+and a GitHub runner has neither — it would silently fall back to an ad-hoc
+signature and publish a build macOS quarantines. The
+[`folio-release`](../.github/workflows/folio-release.yml) workflow therefore
+only builds and tests.
 
 ```sh
 echo 0.5.2 > VERSION
 VERSION=$(cat VERSION)
-./scripts/bundle.sh --dmg                        # reads VERSION
-cp dist/Folio.dmg ~/Desktop/Folio-$VERSION.dmg
+./scripts/bundle.sh --dmg          # sign + notarize + staple, ~20-30 min
+
+# All three must pass before publishing.
+xcrun stapler validate dist/Folio.app
+xcrun stapler validate dist/Folio.dmg
+codesign --verify --deep --strict --verbose=2 dist/Folio.app
 
 git commit -am "Bump Folio to $VERSION"
 git tag v$VERSION && git push origin main v$VERSION
@@ -145,9 +142,17 @@ gh release create v$VERSION \
   --repo elliclee/folio --title "Folio $VERSION" --generate-notes
 ```
 
-The app is ad-hoc signed (not notarized): on first launch users right-click
-→ **Open**, or allow it under System Settings → Privacy & Security. Proper
-Developer ID signing + notarization is a future step.
+Notarization credentials live in `scripts/.env.signing`, which `.gitignore`
+covers via its `.env*` rule — this repo is public, so they must never be
+inlined into the script. Without them `bundle.sh` still runs: it ad-hoc
+signs and ships the first-launch `xattr` note inside the dmg, which is what
+makes a fresh clone build out of the box.
+
+The signing identity is resolved by SHA-1 hash, not by name, and prefers the
+G2 issue. A team can hold two Developer ID certificates with the *identical*
+common name — one from Apple's G1 sub-CA, one from G2 — and `codesign -s`
+rejects an ambiguous name match. G1 leaf validity is also capped at the G1
+sub-CA's own 2027-02-01 expiry, where G2 runs to 2031.
 
 ## Layout
 
